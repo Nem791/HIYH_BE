@@ -2,22 +2,30 @@ package com.example.demo.services;
 
 import com.example.demo.dto.GptRequest;
 import com.example.demo.utils.OpenAiResponseUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class OpenAiService {
-    @Value("${openai.api.url}")
-    private String openAiApiUrl;
+public class AzureOpenAiService {
+    private final RestTemplate restTemplate;
+    private final String openAiApiKey;
+    private final String openAiApiUrl;
 
-    @Value("${openai.api.key}")
-    private String openAiApiKey;
+    @Autowired
+    public AzureOpenAiService(
+            RestTemplate restTemplate,
+            @Value("${openai.api.key}") String openAiApiKey,
+            @Value("${openai.api.url}") String openAiApiUrl
+    ) {
+        this.restTemplate = restTemplate;
+        this.openAiApiKey = openAiApiKey;
+        this.openAiApiUrl = openAiApiUrl;
+    }
 
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    public String fetchChatCompletion(GptRequest request) {
+    public String fetchGptEndpoint(GptRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("api-key", openAiApiKey);
@@ -25,7 +33,6 @@ public class OpenAiService {
         HttpEntity<GptRequest> entity = new HttpEntity<>(request, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(openAiApiUrl, entity, String.class);
         String responseBody = response.getBody();
-
         return OpenAiResponseUtils.extractMessageContentOrEmpty(responseBody);
     }
 }

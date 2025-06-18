@@ -1,9 +1,9 @@
 package com.example.demo.utils;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OpenAiResponseUtils {
+
     public static String extractMessageContentOrEmpty(String apiResponse) {
         try {
             ObjectMapper mapper = new ObjectMapper();
