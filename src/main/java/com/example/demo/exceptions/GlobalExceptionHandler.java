@@ -1,6 +1,8 @@
 package com.example.demo.exceptions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +55,44 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDbConstraint(DataIntegrityViolationException ex) {
         ErrorResponse error = new ErrorResponse("Database error", ex.getMostSpecificCause().getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PdfProcessingException.class)
+    public ResponseEntity<ErrorResponse> handlePdfProcessing(PdfProcessingException ex) {
+        ErrorResponse error = new ErrorResponse("PDF processing error", ex.getMessage());
+        // Choose status code appropriate for your app, e.g. 422 Unprocessable Entity
+        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(GptResponseParseException.class)
+    public ResponseEntity<ErrorResponse> handleGptResponseParse(GptResponseParseException ex) {
+        ErrorResponse error = new ErrorResponse("GPT response parse error", ex.getMessage());
+        // Again, you might choose 502 Bad Gateway or 500 Internal Server Error, as fits
+        return new ResponseEntity<>(error, HttpStatus.BAD_GATEWAY);
+    }
+
+
+    // 🔐 Authentication & Authorization Exceptions
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
+        ErrorResponse error = new ErrorResponse("Token expired", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ErrorResponse> handleJwtException(JwtException ex) {
+        ErrorResponse error = new ErrorResponse("Invalid JWT token", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex) {
+        return new ResponseEntity<>(new ErrorResponse("User not found", ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return new ResponseEntity<>(new ErrorResponse("Invalid credentials", ex.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
     // Simple DTO for error response body

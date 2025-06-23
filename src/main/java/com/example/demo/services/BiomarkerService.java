@@ -60,17 +60,6 @@ public class BiomarkerService {
         }
     }
 
-    public GptResponse createLabInterpretation(GptRequest request) {
-
-        String rawGptResponse = azureOpenAiService.fetchGptEndpoint(request);
-        try {
-            // Happy-path: deserialize into your Java class
-            return objectMapper.readValue(rawGptResponse, GptResponse.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to parse response as GptResponse", e);
-        }
-    }
-
     public String extractTextFromPdf(MultipartFile file) {
         if (file.isEmpty() || !Objects.requireNonNull(file.getOriginalFilename()).endsWith(".pdf")) {
             throw new PdfProcessingException("Please upload a PDF file.");
