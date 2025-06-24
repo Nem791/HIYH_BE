@@ -26,18 +26,18 @@ public class GptRequestUtils {
             });
 
             // System message
-            GptRequest req = getGptRequest(userContent, responseFormat);
+            GptRequest req = getGptRequest(AppConstants.BIOMARKER_EXTRACTION_SYSTEM_PROMPT, userContent, responseFormat);
             return req;
         } catch (Exception e) {
             throw new RuntimeException("Error loading biomarker_response.json", e);
         }
     }
 
-    private static GptRequest getGptRequest(String userContent, Map<String, Object> responseFormat) {
-        GptMessage systemMsg = new GptMessage(AppConstants.ROLE_SYSTEM, AppConstants.LAB_INTERPRETATION_SYSTEM_PROMPT);
+    private static GptRequest getGptRequest(String systemMessage,String userMessage, Map<String, Object> responseFormat) {
+        GptMessage systemMsg = new GptMessage(AppConstants.ROLE_SYSTEM, systemMessage);
 
         // User message
-        GptMessage userMsg = new GptMessage(AppConstants.ROLE_USER, userContent);
+        GptMessage userMsg = new GptMessage(AppConstants.ROLE_USER, userMessage);
 
         // Build list of messages
         List<GptMessage> messages = Arrays.asList(systemMsg, userMsg);

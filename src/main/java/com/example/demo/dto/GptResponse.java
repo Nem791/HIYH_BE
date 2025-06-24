@@ -5,7 +5,7 @@ import java.util.List;
 public class GptResponse {
     private String plain_language_summary;
     private String recommendations;
-    private List<RygAlert> ryg_alert;
+    private List<ResultsData> results_data;
 
     public String getPlain_language_summary() {
         return plain_language_summary;
@@ -15,13 +15,13 @@ public class GptResponse {
         return recommendations;
     }
 
-    public List<RygAlert> getRyg_alert() {
-        return ryg_alert;
+    public List<ResultsData> getResults_data() {
+        return results_data;
     }
 
     public GptResponse() {}
     public GptResponse(String aiResponse) { }
-    public static class RygAlert {
+    public static class ResultsData {
         private String biomarker;
         private ScaleData scale_data;
         private String classification;

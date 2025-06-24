@@ -4,7 +4,9 @@ import com.example.demo.dto.GptRequest;
 import com.example.demo.dto.GptResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
 
+@Service
 public class LabInterpretationService {
     private final AzureOpenAiService azureOpenAiService;
     private final ObjectMapper objectMapper;

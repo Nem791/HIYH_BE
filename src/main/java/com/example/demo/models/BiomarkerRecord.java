@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
 import java.util.Map;
 
+
 @Document(collection = "biomarker_records")
 public class BiomarkerRecord {
     @Id
@@ -17,6 +18,14 @@ public class BiomarkerRecord {
 
     private String userId;
     private Map<String, BiomarkerValue> biomarkers;
+
+    public String getId() {
+        return id;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
     public String getUserId() {
         return userId;

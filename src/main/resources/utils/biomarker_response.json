@@ -1,50 +1,42 @@
 {
   "type": "json_schema",
   "json_schema": {
-    "name": "LabResponse",
-    "strict": true,
+    "name": "ExtractedBiomarkers",
     "schema": {
       "type": "object",
-      "properties": {
-        "plain_language_summary": {
-          "type": "string"
-        },
-        "recommendations": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "results_data": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "biomarker": {
-                "type": "string"
-              },
-              "scale_data": {
-                "type": "object",
-                "properties": {
-                  "yellow_lower_bound": { "type": "number" },
-                  "yellow_upper_bound": { "type": "number" }
-                },
-                "required": ["yellow_lower_bound", "yellow_upper_bound"],
-                "additionalProperties": false
-              },
-              "classification": {
-                "type": "string"
-              },
-              "reason": {
-                "type": "string"
-              }
+      "properties": {},
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": ["number", "string", "null"]
             },
-            "required": ["biomarker", "scale_data", "classification", "reason"],
-            "additionalProperties": false
-          }
+            "resultFlag": {
+              "type": ["string", "null"],
+              "enum": ["Normal", "High", "Low", "Critical", "Abnormal", "Borderline", "Unknown", null]
+            },
+            "referenceRange": {
+              "type": ["string", "null"]
+            },
+            "resultUnits": {
+              "type": ["string", "null"]
+            },
+            "timeResulted": {
+              "type": ["string", "null"],
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "value",
+            "resultFlag",
+            "referenceRange",
+            "resultUnits",
+            "timeResulted"
+          ],
+          "additionalProperties": false
         }
       },
-      "required": ["plain_language_summary", "recommendations", "ryg_alert"],
       "additionalProperties": false
     }
   }

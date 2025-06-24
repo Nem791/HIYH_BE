@@ -1,8 +1,8 @@
 package com.example.demo.services;
 
 import com.example.demo.dto.BiomarkerFormDto;
+import com.example.demo.dto.BiomarkerRecordDto;
 import com.example.demo.dto.GptRequest;
-import com.example.demo.dto.GptResponse;
 import com.example.demo.exceptions.GptResponseParseException;
 import com.example.demo.exceptions.PdfProcessingException;
 import com.example.demo.models.BiomarkerRecord;
@@ -15,13 +15,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class BiomarkerService {
@@ -60,6 +63,21 @@ public class BiomarkerService {
         }
     }
 
+    // Mapping from entity to DTO
+    public BiomarkerRecordDto toDto(BiomarkerRecord record) {
+        return new BiomarkerRecordDto(
+                record.getCreatedAt(),
+                record.getUserId(),
+                record.getBiomarkers()
+        );
+    }
+
+    public List<BiomarkerRecordDto> toDtoList(List<BiomarkerRecord> records) {
+        return records.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
     public String extractTextFromPdf(MultipartFile file) {
         if (file.isEmpty() || !Objects.requireNonNull(file.getOriginalFilename()).endsWith(".pdf")) {
             throw new PdfProcessingException("Please upload a PDF file.");
@@ -72,5 +90,9 @@ public class BiomarkerService {
         } catch (IOException e) {
             throw new PdfProcessingException("Could not process PDF", e);
         }
+    }
+
+    public List<BiomarkerRecord> getLatestBiomarkerRecords(String userId, int n) {
+        return biomarkerRecordRepository.findByUserIdOrderByCreatedAtDesc(userId, PageRequest.of(0, n));
     }
 }
