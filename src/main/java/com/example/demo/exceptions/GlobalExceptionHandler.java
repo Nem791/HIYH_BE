@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.RestClientException;
 
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -71,6 +73,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_GATEWAY);
     }
 
+    @ExceptionHandler(InvalidFormException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFormException(InvalidFormException ex) {
+        String combinedErrors = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining("; "));
+
+        ErrorResponse error = new ErrorResponse("Invalid form data", combinedErrors);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 
     // 🔐 Authentication & Authorization Exceptions
     @ExceptionHandler(ExpiredJwtException.class)

@@ -1,16 +1,21 @@
-package com.example.demo.dto;
+package com.example.demo.dto.request;
+
+import com.example.demo.models.BiomarkerRecord;
 
 import java.util.List;
 
-public class LabInterpretationDataRequest {
-    private List<BiomarkerRecordDto> labResultData;
+public class LabResultWithPatientInfoDto {
+
+    private List<BiomarkerRecord> labResultData;
     private PatientInfoDto patientInfo;
 
-    public List<BiomarkerRecordDto> getLabResultData() {
+    // getters and setters
+
+    public List<BiomarkerRecord> getLabResultData() {
         return labResultData;
     }
 
-    public void setLabResultData(List<BiomarkerRecordDto> labResultData) {
+    public void setLabResultData(List<BiomarkerRecord> labResultData) {
         this.labResultData = labResultData;
     }
 

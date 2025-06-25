@@ -2,11 +2,15 @@ package com.example.demo.utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class OpenAiResponseUtils {
+public final class OpenAiResponseUtils {
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    // Prevent instantiation
+    private OpenAiResponseUtils() {
+    }
 
     public static String extractMessageContentOrEmpty(String apiResponse) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(apiResponse);
             JsonNode choices = root.path("choices");
             if (choices.isArray() && !choices.isEmpty()) {

@@ -16,6 +16,8 @@ public class BiomarkerRecord {
     @CreatedDate
     private Date createdAt;
 
+    private Date reportedOn;
+
     private String userId;
     private Map<String, BiomarkerValue> biomarkers;
 
@@ -37,6 +39,14 @@ public class BiomarkerRecord {
 
     public Map<String, BiomarkerValue> getBiomarkers() {
         return biomarkers;
+    }
+
+    public Date getReportedOn() {
+        return reportedOn;
+    }
+
+    public void setReportedOn(Date reportedOn) {
+        this.reportedOn = reportedOn;
     }
 
     public void setBiomarkers(Map<String, BiomarkerValue> biomarkers) {

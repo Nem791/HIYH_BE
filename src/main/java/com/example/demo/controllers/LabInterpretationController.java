@@ -1,12 +1,12 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dto.BiomarkerFormDto;
-import com.example.demo.dto.GptRequest;
-import com.example.demo.dto.GptResponse;
-import com.example.demo.models.BiomarkerRecord;
+import com.example.demo.dto.response.LabInterpretationResponseDto;
+import com.example.demo.exceptions.InvalidFormException;
 import com.example.demo.services.LabInterpretationService;
-import org.springframework.http.MediaType;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,17 +19,20 @@ public class LabInterpretationController {
         this.labInterpretationService = labInterpretationService;
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GptResponse> createLabInterpretation(@RequestBody GptRequest request) {
-    }
-
-    @PostMapping()
-    public ResponseEntity<BiomarkerRecord> createBiomarkerRecord(
+    @PostMapping
+    public ResponseEntity<LabInterpretationResponseDto> createLabInterpretation(
             @RequestParam("file") MultipartFile file,
-            @ModelAttribute BiomarkerFormDto biomarkerData) {
-        BiomarkerRecord record = biomarkerService.createBiomarkerRecord(file, biomarkerData);
+            @Valid @ModelAttribute BiomarkerFormDto biomarkerData,
+            BindingResult bindingResult) {
 
-        GptResponse gptResponse = labInterpretationService.createLabInterpretation(request);
-        return ResponseEntity.ok(gptResponse);
+
+        if (bindingResult.hasErrors()) {
+            throw new InvalidFormException(bindingResult);
+        }
+
+        LabInterpretationResponseDto labInterpretation =
+                labInterpretationService.createLabInterpretation(file, biomarkerData);
+
+        return ResponseEntity.ok(labInterpretation);
     }
 }
