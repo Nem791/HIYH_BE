@@ -1,6 +1,6 @@
 package com.example.demo.services;
 
-import com.example.demo.dto.BiomarkerFormDto;
+import com.example.demo.dto.request.BiomarkerFormDto;
 import com.example.demo.dto.GptRequest;
 import com.example.demo.exceptions.GptResponseParseException;
 import com.example.demo.models.BiomarkerRecord;
@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,7 +66,7 @@ public class BiomarkerService {
         }
     }
 
-    public List<BiomarkerRecord> getLatestBiomarkerRecords(String userId, int n) {
-        return biomarkerRecordRepository.findByUserIdOrderByCreatedAtDesc(userId, PageRequest.of(0, n));
+    public Page<BiomarkerRecord> getLatestBiomarkerRecords(String userId, int page, int size) {
+        return biomarkerRecordRepository.findByUserIdOrderByCreatedAtDesc(userId, PageRequest.of(page, size));
     }
 }

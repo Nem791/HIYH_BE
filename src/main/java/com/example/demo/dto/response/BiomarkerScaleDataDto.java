@@ -1,5 +1,10 @@
 package com.example.demo.dto.response;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class BiomarkerScaleDataDto {
 
     private double yellowLowerBound;
@@ -7,19 +12,5 @@ public class BiomarkerScaleDataDto {
 
     // Getters and setters
 
-    public double getYellowLowerBound() {
-        return yellowLowerBound;
-    }
 
-    public void setYellowLowerBound(double yellowLowerBound) {
-        this.yellowLowerBound = yellowLowerBound;
-    }
-
-    public double getYellowUpperBound() {
-        return yellowUpperBound;
-    }
-
-    public void setYellowUpperBound(double yellowUpperBound) {
-        this.yellowUpperBound = yellowUpperBound;
-    }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.exceptions;
 
+import com.example.demo.dto.response.ApiErrorResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -17,8 +18,8 @@ public class GlobalExceptionHandler {
 
     // Handle JSON parsing issues (bad response from OpenAI or misconfiguration)
     @ExceptionHandler(JsonProcessingException.class)
-    public ResponseEntity<ErrorResponse> handleJsonProcessingException(JsonProcessingException ex) {
-        ErrorResponse error = new ErrorResponse(
+    public ResponseEntity<ApiErrorResponse> handleJsonProcessingException(JsonProcessingException ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
                 "Bad response from OpenAI",
                 ex.getOriginalMessage()
         );
@@ -27,8 +28,8 @@ public class GlobalExceptionHandler {
 
     // Handle HTTP/API errors when calling OpenAI
     @ExceptionHandler(RestClientException.class)
-    public ResponseEntity<ErrorResponse> handleRestClientException(RestClientException ex) {
-        ErrorResponse error = new ErrorResponse(
+    public ResponseEntity<ApiErrorResponse> handleRestClientException(RestClientException ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
                 "Failed to connect to OpenAI API",
                 ex.getMessage()
         );
@@ -37,16 +38,17 @@ public class GlobalExceptionHandler {
 
     // Optional: Catch-all for any unexpected errors
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        ErrorResponse error = new ErrorResponse(
+    public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
                 "Internal server error",
                 ex.getMessage()
         );
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
-        ErrorResponse error = new ErrorResponse(
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
                 "Invalid request",
                 ex.getMessage()
         );
@@ -54,59 +56,55 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDbConstraint(DataIntegrityViolationException ex) {
-        ErrorResponse error = new ErrorResponse("Database error", ex.getMostSpecificCause().getMessage());
+    public ResponseEntity<ApiErrorResponse> handleDbConstraint(DataIntegrityViolationException ex) {
+        ApiErrorResponse error = new ApiErrorResponse("Database error", ex.getMostSpecificCause().getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(PdfProcessingException.class)
-    public ResponseEntity<ErrorResponse> handlePdfProcessing(PdfProcessingException ex) {
-        ErrorResponse error = new ErrorResponse("PDF processing error", ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handlePdfProcessing(PdfProcessingException ex) {
+        ApiErrorResponse error = new ApiErrorResponse("PDF processing error", ex.getMessage());
         // Choose status code appropriate for your app, e.g. 422 Unprocessable Entity
         return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(GptResponseParseException.class)
-    public ResponseEntity<ErrorResponse> handleGptResponseParse(GptResponseParseException ex) {
-        ErrorResponse error = new ErrorResponse("GPT response parse error", ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handleGptResponseParse(GptResponseParseException ex) {
+        ApiErrorResponse error = new ApiErrorResponse("GPT response parse error", ex.getMessage());
         // Again, you might choose 502 Bad Gateway or 500 Internal Server Error, as fits
         return new ResponseEntity<>(error, HttpStatus.BAD_GATEWAY);
     }
 
     @ExceptionHandler(InvalidFormException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidFormException(InvalidFormException ex) {
+    public ResponseEntity<ApiErrorResponse> handleInvalidFormException(InvalidFormException ex) {
         String combinedErrors = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining("; "));
 
-        ErrorResponse error = new ErrorResponse("Invalid form data", combinedErrors);
+        ApiErrorResponse error = new ApiErrorResponse("Invalid form data", combinedErrors);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     // 🔐 Authentication & Authorization Exceptions
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
-        ErrorResponse error = new ErrorResponse("Token expired", ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
+        ApiErrorResponse error = new ApiErrorResponse("Token expired", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(JwtException.class)
-    public ResponseEntity<ErrorResponse> handleJwtException(JwtException ex) {
-        ErrorResponse error = new ErrorResponse("Invalid JWT token", ex.getMessage());
+    public ResponseEntity<ApiErrorResponse> handleJwtException(JwtException ex) {
+        ApiErrorResponse error = new ApiErrorResponse("Invalid JWT token", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex) {
-        return new ResponseEntity<>(new ErrorResponse("User not found", ex.getMessage()), HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiErrorResponse> handleUserNotFound(UserNotFoundException ex) {
+        return new ResponseEntity<>(new ApiErrorResponse("User not found", ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
-        return new ResponseEntity<>(new ErrorResponse("Invalid credentials", ex.getMessage()), HttpStatus.UNAUTHORIZED);
-    }
-
-    // Simple DTO for error response body
-        public record ErrorResponse(String error, String details) {
+    public ResponseEntity<ApiErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return new ResponseEntity<>(new ApiErrorResponse("Invalid credentials", ex.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 }

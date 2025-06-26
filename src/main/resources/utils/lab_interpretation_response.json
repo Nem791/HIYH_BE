@@ -6,7 +6,7 @@
     "schema": {
       "type": "object",
       "properties": {
-        "plain_language_summary": {
+        "plainLanguageSummary": {
           "type": "string"
         },
         "recommendations": {
@@ -15,7 +15,7 @@
             "type": "string"
           }
         },
-        "results_data": {
+        "resultsData": {
           "type": "array",
           "items": {
             "type": "object",
@@ -23,13 +23,13 @@
               "biomarker": {
                 "type": "string"
               },
-              "scale_data": {
+              "scaleData": {
                 "type": "object",
                 "properties": {
-                  "yellow_lower_bound": { "type": "number" },
-                  "yellow_upper_bound": { "type": "number" }
+                  "yellowLowerBound": { "type": "number" },
+                  "yellowUpperBound": { "type": "number" }
                 },
-                "required": ["yellow_lower_bound", "yellow_upper_bound"],
+                "required": ["yellowLowerBound", "yellowUpperBound"],
                 "additionalProperties": false
               },
               "classification": {
@@ -39,12 +39,12 @@
                 "type": "string"
               }
             },
-            "required": ["biomarker", "scale_data", "classification", "reason"],
+            "required": ["biomarker", "scaleData", "classification", "reason"],
             "additionalProperties": false
           }
         }
       },
-      "required": ["plain_language_summary", "recommendations", "results_data"],
+      "required": ["plainLanguageSummary", "recommendations", "resultsData"],
       "additionalProperties": false
     }
   }

@@ -1,6 +1,6 @@
 package com.example.demo.services;
 
-import com.example.demo.dto.BiomarkerFormDto;
+import com.example.demo.dto.request.BiomarkerFormDto;
 import com.example.demo.dto.GptRequest;
 import com.example.demo.dto.request.PatientInfoDto;
 import com.example.demo.dto.response.LabInterpretationResponseDto;
@@ -12,6 +12,8 @@ import com.example.demo.services.helpers.GptRequestBuilderService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,13 +38,17 @@ public class LabInterpretationService {
         this.labInterpretationRepository = labInterpretationRepository;
     }
 
+    public Page<LabInterpretation> getLabInterpretations(String userId, int page, int size) {
+        return labInterpretationRepository.findByUserIdOrderByCreatedAtDesc(userId, PageRequest.of(page, size));
+    }
+
     public LabInterpretationResponseDto createLabInterpretation(MultipartFile file, BiomarkerFormDto biomarkerData) {
         // 1. Save the record
         BiomarkerRecord record = biomarkerService.createBiomarkerRecord(file, biomarkerData);
 
         // 2. Get recent records
         List<BiomarkerRecord> recentBiomarkerRecords =
-                biomarkerService.getLatestBiomarkerRecords(biomarkerData.getUserId(), 5);
+                biomarkerService.getLatestBiomarkerRecords(biomarkerData.getUserId(), 0, 5).getContent();
 
         // 3. Get or mock patient info
         PatientInfoDto patientInfo = new PatientInfoDto();
@@ -51,13 +57,10 @@ public class LabInterpretationService {
         GptRequest request = gptRequestBuilderService.buildAnalyzeLabResultPrompt(recentBiomarkerRecords, patientInfo);
 
         String rawGptResponse = azureOpenAiService.fetchGptEndpoint(request);
-        System.out.println(rawGptResponse);
 
         try {
             // Step 1: Deserialize stringifies JSON into entity
             LabInterpretation labInterpretation = objectMapper.readValue(rawGptResponse, LabInterpretation.class);
-
-            System.out.println(labInterpretation);
             // Step 2: Add metadata (like createdAt)
             labInterpretation.setCreatedAt(Instant.now());
             labInterpretation.setUserId(biomarkerData.getUserId());
