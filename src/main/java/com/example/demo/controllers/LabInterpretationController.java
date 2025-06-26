@@ -64,7 +64,7 @@ public class LabInterpretationController {
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<LabInterpretationResponseDto> createLabInterpretation(
-            @RequestPart(value = "files") MultipartFile file,
+            @RequestPart(value = "file") MultipartFile file,
             @RequestPart(value = "userId") String userId
     ) {
         BiomarkerFormDto dto = new BiomarkerFormDto();
