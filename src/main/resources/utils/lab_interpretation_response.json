@@ -1,0 +1,51 @@
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "LabResponse",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "plainLanguageSummary": {
+          "type": "string"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resultsData": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "biomarker": {
+                "type": "string"
+              },
+              "scaleData": {
+                "type": "object",
+                "properties": {
+                  "yellowLowerBound": { "type": "number" },
+                  "yellowUpperBound": { "type": "number" }
+                },
+                "required": ["yellowLowerBound", "yellowUpperBound"],
+                "additionalProperties": false
+              },
+              "classification": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": ["biomarker", "scaleData", "classification", "reason"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["plainLanguageSummary", "recommendations", "resultsData"],
+      "additionalProperties": false
+    }
+  }
+}
