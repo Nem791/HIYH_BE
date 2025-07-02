@@ -1,7 +1,11 @@
 package com.example.demo.models;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class LabInterpretationResultData {
 
     @NotNull
@@ -16,37 +20,4 @@ public class LabInterpretationResultData {
     @NotNull
     private String reason;
 
-    // Getters & Setters
-
-    public String getBiomarker() {
-        return biomarker;
-    }
-
-    public void setBiomarker(String biomarker) {
-        this.biomarker = biomarker;
-    }
-
-    public BiomarkerScaleData getScaleData() {
-        return scaleData;
-    }
-
-    public void setScaleData(BiomarkerScaleData scaleData) {
-        this.scaleData = scaleData;
-    }
-
-    public String getClassification() {
-        return classification;
-    }
-
-    public void setClassification(String classification) {
-        this.classification = classification;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
 }

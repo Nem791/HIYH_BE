@@ -9,8 +9,7 @@ public class BiomarkerScaleDataDto {
 
     private double yellowLowerBound;
     private double yellowUpperBound;
-
-    // Getters and setters
-
-
+    private Object currentValue;
+    private String unit;
+    private String referenceRange;
 }

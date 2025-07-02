@@ -10,7 +10,7 @@
           "type": "object",
           "properties": {
             "value": {
-              "type": ["number", "string", "null"]
+              "type": ["number", "null"]
             },
             "resultFlag": {
               "type": ["string", "null"],
