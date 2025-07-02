@@ -2,3 +2,8 @@ spring.application.name=
 openai.api.url=
 openai.api.key=
 azure.openai.deployment-name=
+
+spring.data.mongodb.uri=
+spring.data.mongodb.database=
+
+cors.origin=

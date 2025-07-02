@@ -1,7 +1,10 @@
 package com.example.demo.models;
 
 import jakarta.validation.constraints.NotNull;
-
+import lombok.Getter;
+import lombok.Setter;
+@Setter
+@Getter
 public class BiomarkerScaleData {
 
     @NotNull
@@ -10,21 +13,13 @@ public class BiomarkerScaleData {
     @NotNull
     private double yellowUpperBound;
 
-    // Getters & Setters
+    @NotNull
+    private Object currentValue;
 
-    public double getYellowLowerBound() {
-        return yellowLowerBound;
-    }
+    @NotNull
+    private String unit;
 
-    public void setYellowLowerBound(double yellowLowerBound) {
-        this.yellowLowerBound = yellowLowerBound;
-    }
+    @NotNull
+    private String referenceRange;
 
-    public double getYellowUpperBound() {
-        return yellowUpperBound;
-    }
-
-    public void setYellowUpperBound(double yellowUpperBound) {
-        this.yellowUpperBound = yellowUpperBound;
-    }
 }

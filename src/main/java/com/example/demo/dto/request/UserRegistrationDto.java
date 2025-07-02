@@ -1,29 +1,24 @@
-package com.example.demo.models;
+package com.example.demo.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
-import java.util.UUID;
 
-@Getter
 @Setter
-@Document(collection = "users")
-public class User {
-    @Id
-    private String id;
+@Getter
+public class UserRegistrationDto {
 
-    public User() {
-        this.id = UUID.randomUUID().toString();
-    }
-
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
     private String email;
-    private String password; // hashed
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters")
+    private String password;
 
     // Optional patient info fields
     private Integer age;
@@ -32,4 +27,5 @@ public class User {
     private List<String> chronicDisease;
     private Double weight;
     private Double height;
+
 }

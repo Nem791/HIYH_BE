@@ -6,9 +6,12 @@ import com.example.demo.dto.request.PatientInfoDto;
 import com.example.demo.dto.response.LabInterpretationResponseDto;
 import com.example.demo.exceptions.GptResponseParseException;
 import com.example.demo.models.BiomarkerRecord;
+import com.example.demo.models.BiomarkerValue;
 import com.example.demo.models.LabInterpretation;
 import com.example.demo.repository.LabInterpretationRepository;
 import com.example.demo.services.helpers.GptRequestBuilderService;
+import com.example.demo.utils.BiomarkerUtils;
+import com.example.demo.utils.LabInterpretationUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
@@ -19,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LabInterpretationService {
@@ -49,7 +53,6 @@ public class LabInterpretationService {
         // 2. Get recent records
         List<BiomarkerRecord> recentBiomarkerRecords =
                 biomarkerService.getLatestBiomarkerRecords(biomarkerData.getUserId(), 0, 5).getContent();
-
         // 3. Get or mock patient info
         PatientInfoDto patientInfo = new PatientInfoDto();
 
@@ -59,16 +62,21 @@ public class LabInterpretationService {
         String rawGptResponse = azureOpenAiService.fetchGptEndpoint(request);
 
         try {
-            // Step 1: Deserialize stringifies JSON into entity
+            // Step 1
             LabInterpretation labInterpretation = objectMapper.readValue(rawGptResponse, LabInterpretation.class);
-            // Step 2: Add metadata (like createdAt)
+
+            // Step 2
             labInterpretation.setCreatedAt(Instant.now());
             labInterpretation.setUserId(biomarkerData.getUserId());
 
-            // Step 3: Save to MongoDB
+            // Step 3 - Enrich from merged biomarker values
+            Map<String, BiomarkerValue> merged = BiomarkerUtils.mergeBiomarkersWithPriority(recentBiomarkerRecords);
+            LabInterpretationUtils.enrichLabInterpretationWithBiomarkerValues(labInterpretation, merged);
+
+            // Step 4: Save to MongoDB
             LabInterpretation saved = labInterpretationRepository.save(labInterpretation);
 
-            // Step 4: Convert saved entity to response DTO
+            // Step 5: Convert saved entity to response DTO
             return modelMapper.map(saved, LabInterpretationResponseDto.class);
 
         } catch (JsonProcessingException e) {
