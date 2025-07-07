@@ -22,7 +22,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    private Claims getAllClaimsFromToken(String token) {
+    public Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(SIGNING_KEY)
                 .build()
@@ -33,7 +33,6 @@ public class JwtUtil {
     public boolean validateToken(String token) {
         Claims claims = getAllClaimsFromToken(token);
 
-        // Optional: check expiration explicitly (usually parseSignedClaims does this)
         Date expiration = claims.getExpiration();
         if (expiration != null && expiration.before(new Date())) {
             throw new ExpiredJwtException(null, claims, "Token expired");

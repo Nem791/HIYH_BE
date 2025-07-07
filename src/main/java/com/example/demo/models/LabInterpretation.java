@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Setter
@@ -24,6 +25,8 @@ public class LabInterpretation {
 
     @CreatedDate
     private Instant createdAt;
+
+    private Date reportedOn;
 
     @NotEmpty
     private String plainLanguageSummary;
