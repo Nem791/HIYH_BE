@@ -20,8 +20,8 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(corsOrigin) // your frontend's URL
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("*")
-                        .allowCredentials(true); // allows cookies if needed
+                        .allowedHeaders("*");
+//                        .allowCredentials(true); // allows cookies if needed
             }
         };
     }
