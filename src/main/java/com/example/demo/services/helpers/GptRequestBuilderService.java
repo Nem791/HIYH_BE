@@ -41,7 +41,7 @@ public class GptRequestBuilderService {
 
     public GptRequest buildAnalyzeLabResultPrompt(List<BiomarkerRecord> recentBiomarkerRecords, PatientInfoDto patientInfo) {
         // Mock/fill patient data
-        generateMockPatientData(patientInfo);
+//        generateMockPatientData(patientInfo);
 
         LabResultWithPatientInfoDto requestDto = new LabResultWithPatientInfoDto();
         requestDto.setLabResultData(recentBiomarkerRecords);

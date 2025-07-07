@@ -7,6 +7,7 @@ import com.example.demo.models.BiomarkerRecord;
 import com.example.demo.models.BiomarkerValue;
 import com.example.demo.repository.BiomarkerRecordRepository;
 import com.example.demo.services.helpers.GptRequestBuilderService;
+import com.example.demo.utils.BiomarkerUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +47,7 @@ public class BiomarkerService {
     public BiomarkerRecord createBiomarkerRecord(MultipartFile file, BiomarkerFormDto biomarkerData) {
         String rawLabResultText = pdfService.extractTextFromPdf(file);
         Map<String, BiomarkerValue> biomarkers = extractBiomarkersFromText(rawLabResultText);
+        BiomarkerUtils.sanitizeBiomarkerKeys(biomarkers);
 
         BiomarkerRecord record = new BiomarkerRecord();
         record.setUserId(biomarkerData.getUserId());
