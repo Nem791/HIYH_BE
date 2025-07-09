@@ -9,6 +9,9 @@
         "plainLanguageSummary": {
           "type": "string"
         },
+        "plainLanguageSummaryShort": {
+          "type": "string"
+        },
         "recommendations": {
           "type": "array",
           "items": {
@@ -35,16 +38,16 @@
               "classification": {
                 "type": "string"
               },
-              "reason": {
+              "definition": {
                 "type": "string"
               }
             },
-            "required": ["biomarker", "scaleData", "classification", "reason"],
+            "required": ["biomarker", "scaleData", "classification", "definition"],
             "additionalProperties": false
           }
         }
       },
-      "required": ["plainLanguageSummary", "recommendations", "resultsData"],
+      "required": ["plainLanguageSummary", "plainLanguageSummaryShort", "recommendations", "resultsData"],
       "additionalProperties": false
     }
   }

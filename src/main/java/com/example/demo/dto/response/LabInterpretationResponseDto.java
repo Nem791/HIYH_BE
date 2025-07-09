@@ -15,6 +15,7 @@ public class LabInterpretationResponseDto {
     private Instant createdAt;
     private Date reportedOn;
     private String plainLanguageSummary;
+    private String plainLanguageSummaryShort;
     private List<String> recommendations;
     private List<LabInterpretationResultDataDto> resultsData;
 }

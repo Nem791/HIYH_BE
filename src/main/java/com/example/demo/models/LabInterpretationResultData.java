@@ -18,6 +18,6 @@ public class LabInterpretationResultData {
     private String classification;
 
     @NotNull
-    private String reason;
+    private String definition;
 
 }

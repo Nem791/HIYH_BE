@@ -32,6 +32,9 @@ public class LabInterpretation {
     private String plainLanguageSummary;
 
     @NotEmpty
+    private String plainLanguageSummaryShort;
+
+    @NotEmpty
     private List<String> recommendations;
 
     @NotEmpty

@@ -33,7 +33,9 @@ public class LabInterpretationService {
     private final ModelMapper modelMapper;
     private final LabInterpretationRepository labInterpretationRepository;
 
-    public LabInterpretationService(AzureOpenAiService azureOpenAiService, BiomarkerService biomarkerService, GptRequestBuilderService gptRequestBuilderService, ObjectMapper objectMapper, ModelMapper modelMapper, LabInterpretationRepository labInterpretationRepository) {
+    public LabInterpretationService(AzureOpenAiService azureOpenAiService, BiomarkerService biomarkerService,
+            GptRequestBuilderService gptRequestBuilderService, ObjectMapper objectMapper, ModelMapper modelMapper,
+            LabInterpretationRepository labInterpretationRepository) {
         this.azureOpenAiService = azureOpenAiService;
         this.biomarkerService = biomarkerService;
         this.gptRequestBuilderService = gptRequestBuilderService;
@@ -51,8 +53,8 @@ public class LabInterpretationService {
         BiomarkerRecord record = biomarkerService.createBiomarkerRecord(file, biomarkerData);
 
         // 2. Get recent records
-        List<BiomarkerRecord> recentBiomarkerRecords =
-                biomarkerService.getLatestBiomarkerRecords(biomarkerData.getUserId(), 0, 1).getContent();
+        List<BiomarkerRecord> recentBiomarkerRecords = biomarkerService
+                .getLatestBiomarkerRecords(biomarkerData.getUserId(), 0, 1).getContent();
         // 3. Get or mock patient info
         PatientInfoDto patientInfo = new PatientInfoDto();
 
