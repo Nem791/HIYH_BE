@@ -9,6 +9,9 @@
         "plainLanguageSummary": {
           "type": "string"
         },
+        "plainLanguageSummaryShort": {
+          "type": "string"
+        },
         "recommendations": {
           "type": "array",
           "items": {
@@ -44,7 +47,7 @@
           }
         }
       },
-      "required": ["plainLanguageSummary", "recommendations", "resultsData"],
+      "required": ["plainLanguageSummary", "plainLanguageSummaryShort", "recommendations", "resultsData"],
       "additionalProperties": false
     }
   }
