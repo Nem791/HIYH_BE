@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 public class LabInterpretationResponseDto {
 
+    private String id;
     private String userId;
     private Instant createdAt;
     private Date reportedOn;

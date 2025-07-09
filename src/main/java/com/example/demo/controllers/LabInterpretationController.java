@@ -3,7 +3,7 @@ package com.example.demo.controllers;
 import com.example.demo.dto.request.BiomarkerFormDto;
 import com.example.demo.dto.response.ApiErrorResponse;
 import com.example.demo.dto.response.LabInterpretationResponseDto;
-import com.example.demo.models.BiomarkerRecord;
+import com.example.demo.dto.response.LabInterpretationRecentListDto;
 import com.example.demo.models.LabInterpretation;
 import com.example.demo.services.LabInterpretationService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +34,7 @@ public class LabInterpretationController {
             summary = "Get list of lab interpretations (paginated)",
             description = "Fetches a paginated list of lab interpretations (full lab report analysis) for a specific user, sorted from most recent to oldest."
     )
-    public Page<LabInterpretation> getLabInterpretations(
+    public Page<LabInterpretationRecentListDto> getLabInterpretations(
             @Parameter(description = "User ID to filter lab interpretations", example = "abc123", required = true)
             @RequestParam String userId,
             @Parameter(description = "Page number (0-based)", example = "0")
@@ -76,4 +76,31 @@ public class LabInterpretationController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{id}")
+    @Operation(
+            summary = "Get a lab interpretation by ID for the authenticated user",
+            description = "Fetches a single lab interpretation by its ID, verifying ownership by the user."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lab interpretation found",
+                    content = @Content(schema = @Schema(implementation = LabInterpretationResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Lab interpretation not found or access denied",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))
+            )
+    })
+    public ResponseEntity<LabInterpretationResponseDto> getLabInterpretationById(
+            @Parameter(description = "Lab interpretation ID", required = true)
+            @PathVariable String id
+    ) {
+        String userId = "61";
+
+        LabInterpretationResponseDto dto = labInterpretationService.getByIdAndUser(id, userId);
+
+        return ResponseEntity.ok(dto);
+    }
 }

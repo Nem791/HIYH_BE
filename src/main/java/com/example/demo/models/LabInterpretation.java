@@ -28,6 +28,9 @@ public class LabInterpretation {
 
     private Date reportedOn;
 
+    @NotNull
+    private String biomarkerRecordId;
+
     @NotEmpty
     private String plainLanguageSummary;
 
