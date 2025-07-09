@@ -78,8 +78,8 @@ public class LabInterpretationController {
 
     @GetMapping("/{id}")
     @Operation(
-            summary = "Get a lab interpretation by ID for the authenticated user",
-            description = "Fetches a single lab interpretation by its ID, verifying ownership by the user."
+            summary = "Get a lab interpretation by ID",
+            description = "Fetches a single lab interpretation by its ID for the given user."
     )
     @ApiResponses({
             @ApiResponse(
@@ -95,12 +95,13 @@ public class LabInterpretationController {
     })
     public ResponseEntity<LabInterpretationResponseDto> getLabInterpretationById(
             @Parameter(description = "Lab interpretation ID", required = true)
-            @PathVariable String id
+            @PathVariable String id,
+
+            @Parameter(description = "User ID to verify ownership", required = true, example = "61")
+            @RequestParam String userId
     ) {
-        String userId = "61";
-
         LabInterpretationResponseDto dto = labInterpretationService.getByIdAndUser(id, userId);
-
         return ResponseEntity.ok(dto);
     }
+
 }
