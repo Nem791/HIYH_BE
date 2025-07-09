@@ -38,11 +38,11 @@
               "classification": {
                 "type": "string"
               },
-              "reason": {
+              "definition": {
                 "type": "string"
               }
             },
-            "required": ["biomarker", "scaleData", "classification", "reason"],
+            "required": ["biomarker", "scaleData", "classification", "definition"],
             "additionalProperties": false
           }
         }

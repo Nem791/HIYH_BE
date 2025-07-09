@@ -10,6 +10,6 @@ public class LabInterpretationResultDataDto {
     private String biomarker;
     private BiomarkerScaleDataDto scaleData;
     private String classification;
-    private String reason;
+    private String definition;
 
 }
