@@ -4,7 +4,9 @@ import com.example.demo.dto.request.BiomarkerFormDto;
 import com.example.demo.dto.GptRequest;
 import com.example.demo.dto.request.PatientInfoDto;
 import com.example.demo.dto.response.LabInterpretationResponseDto;
+import com.example.demo.dto.response.LabInterpretationRecentListDto;
 import com.example.demo.exceptions.GptResponseParseException;
+import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.models.BiomarkerRecord;
 import com.example.demo.models.BiomarkerValue;
 import com.example.demo.models.LabInterpretation;
@@ -16,7 +18,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,8 +43,16 @@ public class LabInterpretationService {
         this.labInterpretationRepository = labInterpretationRepository;
     }
 
-    public Page<LabInterpretation> getLabInterpretations(String userId, int page, int size) {
-        return labInterpretationRepository.findByUserIdOrderByCreatedAtDesc(userId, PageRequest.of(page, size));
+    public LabInterpretationResponseDto getByIdAndUser(String id, String userId) {
+        LabInterpretation labInterpretation = labInterpretationRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "LabInterpretation with ID " + id + " not found or access denied"));
+
+        return modelMapper.map(labInterpretation, LabInterpretationResponseDto.class);
+    }
+
+    public Page<LabInterpretationRecentListDto> getLabInterpretations(String userId, int page, int size) {
+        return labInterpretationRepository.findRecentByUserId(userId, page, size);
     }
 
     public LabInterpretationResponseDto createLabInterpretation(MultipartFile file, BiomarkerFormDto biomarkerData) {
@@ -69,6 +78,7 @@ public class LabInterpretationService {
             labInterpretation.setCreatedAt(Instant.now());
             labInterpretation.setReportedOn(record.getReportedOn());
             labInterpretation.setUserId(biomarkerData.getUserId());
+            labInterpretation.setBiomarkerRecordId(record.getId());
 
             // Step 3 - Enrich from merged biomarker values
             Map<String, BiomarkerValue> merged = BiomarkerUtils.mergeBiomarkersWithPriority(recentBiomarkerRecords);

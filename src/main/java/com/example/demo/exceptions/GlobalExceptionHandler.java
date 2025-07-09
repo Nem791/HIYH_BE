@@ -120,4 +120,11 @@ public class GlobalExceptionHandler {
         ApiErrorResponse error = new ApiErrorResponse("Validation failed", combinedErrors);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
+        ApiErrorResponse error = new ApiErrorResponse("Resource Not Found", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
 }
