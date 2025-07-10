@@ -2,11 +2,11 @@ package com.example.demo.services;
 
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.request.UserRegistrationDto;
+import com.example.demo.exceptions.InvalidCredentialsException;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,7 +48,7 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Invalid credentials");
+            throw new InvalidCredentialsException("Invalid credentials");
         }
         return jwtUtil.generateToken(user.getEmail());
     }

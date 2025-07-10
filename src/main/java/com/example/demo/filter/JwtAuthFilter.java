@@ -39,7 +39,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 if (jwtUtil.validateToken(token)) {
                     String email = jwtUtil.getAllClaimsFromToken(token).getSubject();
-                    UserDetails userDetails = userService.loadUserByUsername(email);
+                    CustomUserDetails userDetails = userService.loadUserByUsername(email);
 
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(
