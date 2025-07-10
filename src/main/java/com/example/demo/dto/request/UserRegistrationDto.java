@@ -6,8 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Setter
 @Getter
 public class UserRegistrationDto {
@@ -19,13 +17,5 @@ public class UserRegistrationDto {
     @NotBlank(message = "Password is required")
     @Size(min = 4, message = "Password must be at least 4 characters")
     private String password;
-
-    // Optional patient info fields
-    private Integer age;
-    private String gender;
-    private String race;
-    private List<String> chronicDisease;
-    private Double weight;
-    private Double height;
 
 }

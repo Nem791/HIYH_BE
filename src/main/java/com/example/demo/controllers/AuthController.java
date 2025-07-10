@@ -3,10 +3,12 @@ package com.example.demo.controllers;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.request.UserRegistrationDto;
 import com.example.demo.services.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(
+        name = "Authentication",
+        description = "Endpoints for user login, logout, signup, and session verification"
+)
 public class AuthController {
     private final AuthService authService;
 
@@ -56,6 +62,12 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Unauthorized", "details", "You are not logged in."));
+        }
+
         return ResponseEntity.ok(Map.of("user", authentication.getName()));
     }
+
 }

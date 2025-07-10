@@ -54,16 +54,20 @@ public class LabInterpretationService {
     }
 
     public Page<LabInterpretationRecentListDto> getLabInterpretations(String userId, int page, int size) {
+        System.out.println(userId);
         return labInterpretationRepository.findRecentByUserId(userId, page, size);
     }
 
-    public LabInterpretationResponseDto createLabInterpretation(MultipartFile file, BiomarkerFormDto biomarkerData) {
+    public LabInterpretationResponseDto createLabInterpretation(MultipartFile file, String userId) {
+        BiomarkerFormDto dto = new BiomarkerFormDto();
+        dto.setUserId(userId);
+
         // 1. Save the record
-        BiomarkerRecord record = biomarkerService.createBiomarkerRecord(file, biomarkerData);
+        BiomarkerRecord record = biomarkerService.createBiomarkerRecord(file, dto);
 
         // 2. Get recent records
         List<BiomarkerRecord> recentBiomarkerRecords = biomarkerService
-                .getLatestBiomarkerRecords(biomarkerData.getUserId(), 0, 1).getContent();
+                .getLatestBiomarkerRecords(userId, 0, 1).getContent();
         // 3. Get or mock patient info
         PatientInfoDto patientInfo = new PatientInfoDto();
 
@@ -79,7 +83,7 @@ public class LabInterpretationService {
             // Step 2
             labInterpretation.setCreatedAt(Instant.now());
             labInterpretation.setReportedOn(record.getReportedOn());
-            labInterpretation.setUserId(biomarkerData.getUserId());
+            labInterpretation.setUserId(userId);
             labInterpretation.setBiomarkerRecordId(record.getId());
 
             // Step 3 - Enrich from merged biomarker values
