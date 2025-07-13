@@ -2,7 +2,6 @@ package com.example.demo.repository;
 
 import com.example.demo.dto.response.LabInterpretationRecentListDto;
 import com.example.demo.models.LabInterpretation;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -13,8 +12,10 @@ import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class LabInterpretationRepositoryImpl implements LabInterpretationRepositoryCustom {
 
@@ -22,11 +23,41 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
     private MongoTemplate mongoTemplate;
 
     @Override
-    public Page<LabInterpretationRecentListDto> findRecentByUserId(String userId, int page, int size) {
-        MatchOperation match = Aggregation.match(Criteria.where("userId").is(userId));
-        SortOperation sort = Aggregation.sort(Sort.by(Sort.Direction.DESC, "createdAt"));
+    public Page<LabInterpretationRecentListDto> findRecentByUserId(
+            String userId, int page, int size,
+            String sortBy, String sortOrder, String startDate, String endDate, boolean onlyAbnormal
+    ) {
+        Criteria matchCriteria = Criteria.where("userId").is(userId);
 
-        ProjectionOperation project = Aggregation.project("id", "userId", "createdAt", "reportedOn")    .and(
+        // start date filtering
+        String dateFormat = "yyyy-MM-dd'T'HH:mm:ssX"; // adjust to your format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+
+        // convert string dates to Date objects if provided
+        Date startDateFormatted = startDate != null ? Date.from(ZonedDateTime.parse(startDate, formatter).toInstant()) : null;
+        Date endDateFormatted = endDate != null ? Date.from(ZonedDateTime.parse(endDate, formatter).toInstant()) : null;
+        
+        if(startDateFormatted != null && endDateFormatted != null) {
+                matchCriteria = matchCriteria.and("reportedOn").gte(startDateFormatted).lte(endDateFormatted);
+        } else if (startDateFormatted != null) {
+                matchCriteria = matchCriteria.and("reportedOn").gte(startDateFormatted);
+        } else if (endDateFormatted != null) {
+                matchCriteria = matchCriteria.and("reportedOn").lte(endDateFormatted);
+        }
+
+        // filter only abnormal biomarkers if requested
+        if (onlyAbnormal) {
+            matchCriteria = matchCriteria.and("abnormalBiomarkers").gt(0);
+        }
+
+        MatchOperation match = Aggregation.match(matchCriteria);
+        
+        // sort based on field and direction
+        Sort.Direction direction = "asc".equalsIgnoreCase(sortOrder) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        String sortField = "abnormalBiomarkers".equalsIgnoreCase(sortBy) ? "abnormalBiomarkers" : "reportedOn";
+        SortOperation sort = Aggregation.sort(Sort.by(direction, sortField));
+
+        ProjectionOperation project = Aggregation.project("id", "userId", "createdAt", "reportedOn").and(
                 ArrayOperators.Size.lengthOfArray(
                         ArrayOperators.Filter.filter("resultsData")
                                 .as("entry")
@@ -37,7 +68,7 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
         SkipOperation skip = Aggregation.skip((long) page * size);
         LimitOperation limit = Aggregation.limit(size);
 
-        Aggregation aggregation = Aggregation.newAggregation(match, sort, project, skip, limit);
+        Aggregation aggregation = Aggregation.newAggregation(project, match, sort, skip, limit);
 
         List<LabInterpretationRecentListDto> results = mongoTemplate.aggregate(
                 aggregation,
@@ -46,7 +77,7 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
         ).getMappedResults();
 
         long total = mongoTemplate.count(
-                Query.query(Criteria.where("userId").is(userId)),
+                Query.query(matchCriteria),
                 LabInterpretation.class
         );
 

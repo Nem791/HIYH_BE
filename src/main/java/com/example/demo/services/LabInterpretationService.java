@@ -53,8 +53,13 @@ public class LabInterpretationService {
         return modelMapper.map(labInterpretation, LabInterpretationResponseDto.class);
     }
 
-    public Page<LabInterpretationRecentListDto> getLabInterpretations(String userId, int page, int size) {
-        return labInterpretationRepository.findRecentByUserId(userId, page, size);
+    public Page<LabInterpretationRecentListDto> getLabInterpretations(
+            String userId, int page, int size,
+            String sortBy, String sortOrder, String startDate, String endDate, boolean onlyAbnormal
+    ) {
+        return labInterpretationRepository.findRecentByUserId(
+                userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal
+        );
     }
 
     public LabInterpretationResponseDto createLabInterpretation(MultipartFile file, BiomarkerFormDto biomarkerData) {

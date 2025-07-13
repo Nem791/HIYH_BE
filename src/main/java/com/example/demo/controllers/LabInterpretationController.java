@@ -40,9 +40,19 @@ public class LabInterpretationController {
             @Parameter(description = "Page number (0-based)", example = "0")
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Page size (number of records per page)", example = "10")
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "Sort by: 'reportDate' or 'abnormalBiomarkers'", example = "reportDate")
+            @RequestParam(defaultValue = "reportDate") String sortBy,
+            @Parameter(description = "Sort order: 'asc' or 'desc'", example = "desc")
+            @RequestParam(defaultValue = "desc") String sortOrder,
+            @Parameter(description = "Start date for filtering (ISO 8601)", example = "2025-05-20T00:00:00Z")
+            @RequestParam(required = false) String startDate,
+            @Parameter(description = "End date for filtering (ISO 8601)", example = "2025-05-22T23:59:59Z")
+            @RequestParam(required = false) String endDate,
+            @Parameter(description = "Only show results with abnormal biomarkers (true/false)", example = "false")
+            @RequestParam(defaultValue = "false") boolean onlyAbnormal
     ) {
-        return labInterpretationService.getLabInterpretations(userId, page, size);
+        return labInterpretationService.getLabInterpretations(userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal);
     }
 
 
