@@ -37,10 +37,8 @@ public class SecurityConfig {
                 );
 
         if (!securityEnabled) {
-            // 🔓 DEV MODE: allow everything
             http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         } else {
-            // 🔐 PROD MODE: secure app, allow only selected public routes
             http.authorizeHttpRequests(auth -> auth
                     .requestMatchers(
                             "/v3/api-docs/**",
