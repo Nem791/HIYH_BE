@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,10 +22,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserService userService;
+    private final boolean securityEnabled;
 
-    public JwtAuthFilter(JwtUtil jwtUtil, UserService userService) {
+    public JwtAuthFilter(JwtUtil jwtUtil, UserService userService, @Value("${security.enabled:true}") boolean securityEnabled) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
+        this.securityEnabled = securityEnabled;
     }
 
     @Override
@@ -51,6 +54,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // Let global handler take care of logging/response
                 SecurityContextHolder.clearContext();
             }
+        }
+
+        // If no authentication yet AND we're in dev mode, set a fixed dev user!
+        if (!securityEnabled && token == null) {
+            CustomUserDetails devUser = userService.loadUserByUsername("test@example.com"); // your dev user
+            UsernamePasswordAuthenticationToken devAuth =
+                    new UsernamePasswordAuthenticationToken(
+                            devUser, null, devUser.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(devAuth);
         }
 
         filterChain.doFilter(request, response);
