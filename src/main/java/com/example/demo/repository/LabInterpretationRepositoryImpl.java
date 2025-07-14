@@ -37,8 +37,8 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
 
         // convert string dates to Date objects if provided
-        Date startDateFormatted = startDate != null ? Date.from(ZonedDateTime.parse(startDate, formatter).toInstant()) : null;
-        Date endDateFormatted = endDate != null ? Date.from(ZonedDateTime.parse(endDate, formatter).toInstant()) : null;
+        Date startDateFormatted = isValidDate(startDate, formatter) ? Date.from(ZonedDateTime.parse(startDate, formatter).toInstant()) : null;
+        Date endDateFormatted = isValidDate(endDate, formatter) ? Date.from(ZonedDateTime.parse(endDate, formatter).toInstant()) : null;
         
         if(startDateFormatted != null && endDateFormatted != null) {
                 matchCriteria = matchCriteria.and("reportedOn").gte(startDateFormatted).lte(endDateFormatted);
@@ -92,5 +92,15 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
         );
 
         return new PageImpl<>(results, PageRequest.of(page, size), total);
+    }
+
+    private boolean isValidDate(String dateStr, DateTimeFormatter formatter) {
+        if (dateStr == null) return false;
+        try {
+            ZonedDateTime.parse(dateStr, formatter);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
