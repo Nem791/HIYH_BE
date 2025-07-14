@@ -25,9 +25,12 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
     @Override
     public Page<LabInterpretationRecentListDto> findRecentByUserId(
             String userId, int page, int size,
-            String sortBy, String sortOrder, String startDate, String endDate, boolean onlyAbnormal
+            String sortBy, String sortOrder, String startDate, String endDate, boolean onlyAbnormal, String testType
     ) {
         Criteria matchCriteria = Criteria.where("userId").is(userId);
+
+        // filter by test type
+        matchCriteria = matchCriteria.and("testType").is(testType);
 
         // start date filtering
         String dateFormat = "yyyy-MM-dd'T'HH:mm:ssX"; // adjust to your format
@@ -57,7 +60,7 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
         String sortField = "abnormalBiomarkers".equalsIgnoreCase(sortBy) ? "abnormalBiomarkers" : "reportedOn";
         SortOperation sort = Aggregation.sort(Sort.by(direction, sortField));
 
-        ProjectionOperation project = Aggregation.project("id", "userId", "createdAt", "reportedOn").and(
+        ProjectionOperation project = Aggregation.project("id", "userId", "createdAt", "reportedOn", "testType", "testName").and(
                 ArrayOperators.Size.lengthOfArray(
                         ArrayOperators.Filter.filter("resultsData")
                                 .as("entry")

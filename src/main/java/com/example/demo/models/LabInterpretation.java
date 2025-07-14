@@ -28,6 +28,10 @@ public class LabInterpretation {
 
     private Date reportedOn;
 
+    private String testType;
+
+    private String testName;
+
     @NotNull
     private String biomarkerRecordId;
 

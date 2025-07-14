@@ -50,9 +50,11 @@ public class LabInterpretationController {
             @Parameter(description = "End date for filtering (ISO 8601)", example = "2025-05-22T23:59:59Z")
             @RequestParam(required = false) String endDate,
             @Parameter(description = "Only show results with abnormal biomarkers (true/false)", example = "false")
-            @RequestParam(defaultValue = "false") boolean onlyAbnormal
+            @RequestParam(defaultValue = "false") boolean onlyAbnormal,
+            @Parameter(description = "Filter by test type. Options (based on Figma): 'bloodTest', lipidPanel, 'urineTest', 'others'", example = "bloodTest")
+            @RequestParam(defaultValue = "bloodTest") String testType
     ) {
-        return labInterpretationService.getLabInterpretations(userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal);
+        return labInterpretationService.getLabInterpretations(userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testType);
     }
 
 

@@ -6,6 +6,6 @@ import org.springframework.data.domain.Page;
 public interface LabInterpretationRepositoryCustom {
     Page<LabInterpretationRecentListDto> findRecentByUserId(
         String userId, int page, int size,
-        String sortBy, String sortOrder, String startDate, String endDate, boolean onlyAbnormal
+        String sortBy, String sortOrder, String startDate, String endDate, boolean onlyAbnormal, String testType
     );
 }
