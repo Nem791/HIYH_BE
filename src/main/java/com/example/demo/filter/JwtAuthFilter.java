@@ -58,7 +58,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // If no authentication yet & in dev mode, set a fixed dev user!
         if (!securityEnabled && token == null) {
-            CustomUserDetails devUser = userService.loadUserByUsername("test@example.com");
+            CustomUserDetails devUser = userService.loadUserByUsername("dev@example.com");
             UsernamePasswordAuthenticationToken devAuth =
                     new UsernamePasswordAuthenticationToken(
                             devUser, null, devUser.getAuthorities());
