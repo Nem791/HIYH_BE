@@ -26,13 +26,14 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
         MatchOperation match = Aggregation.match(Criteria.where("userId").is(userId));
         SortOperation sort = Aggregation.sort(Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        ProjectionOperation project = Aggregation.project("id", "userId", "createdAt", "reportedOn")    .and(
-                ArrayOperators.Size.lengthOfArray(
-                        ArrayOperators.Filter.filter("resultsData")
-                                .as("entry")
-                                .by(ComparisonOperators.Ne.valueOf("$$entry.classification").notEqualToValue("green"))
-                )
-        ).as("abnormalBiomarkers");
+        ProjectionOperation project = Aggregation.project("id", "userId", "createdAt", "reportedOn")
+                .and(
+                        ArrayOperators.Size.lengthOfArray(
+                                ArrayOperators.Filter.filter("resultsData")
+                                        .as("entry")
+                                        .by(ComparisonOperators.Ne.valueOf("$$entry.classification").notEqualToValue("green"))
+                        )
+                ).as("abnormalBiomarkers");
 
         SkipOperation skip = Aggregation.skip((long) page * size);
         LimitOperation limit = Aggregation.limit(size);
