@@ -41,8 +41,8 @@ public class LabInterpretationController {
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Page size (number of records per page)", example = "10")
             @RequestParam(defaultValue = "10") int size,
-            @Parameter(description = "Sort by: 'reportDate' or 'abnormalBiomarkers'", example = "reportDate")
-            @RequestParam(defaultValue = "reportDate") String sortBy,
+            @Parameter(description = "Sort by: 'reportedOn' or 'abnormalBiomarkers' or 'testName'", example = "reportedOn")
+            @RequestParam(defaultValue = "reportedOn") String sortBy,
             @Parameter(description = "Sort order: 'asc' or 'desc'", example = "desc")
             @RequestParam(defaultValue = "desc") String sortOrder,
             @Parameter(description = "Start date for filtering (ISO 8601)", example = "2025-05-20T00:00:00Z")

@@ -57,8 +57,15 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
         
         // sort based on field and direction
         Sort.Direction direction = "asc".equalsIgnoreCase(sortOrder) ? Sort.Direction.ASC : Sort.Direction.DESC;
-        String sortField = "abnormalBiomarkers".equalsIgnoreCase(sortBy) ? "abnormalBiomarkers" : "reportedOn";
-        SortOperation sort = Aggregation.sort(Sort.by(direction, sortField));
+        String sortByValue;
+        if("abnormalBiomarkers".equalsIgnoreCase(sortBy)) {
+            sortByValue = "abnormalBiomarkers";
+        } else if ("testName".equalsIgnoreCase(sortBy)) {
+            sortByValue = "testName";
+        } else {
+            sortByValue = "reportedOn";
+        }
+        SortOperation sort = Aggregation.sort(Sort.by(direction, sortByValue));
 
         ProjectionOperation project = Aggregation.project("id", "userId", "createdAt", "reportedOn", "testType", "testName").and(
                 ArrayOperators.Size.lengthOfArray(
