@@ -27,13 +27,11 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
             String userId, int page, int size,
             String sortBy, String sortOrder, String startDate, String endDate, boolean onlyAbnormal, String testType
     ) {
-        Criteria matchCriteria = Criteria.where("userId").is(userId);
-
-        // filter by test type
-        matchCriteria = matchCriteria.and("testType").is(testType);
+        // filter by userId and testType
+        Criteria matchCriteria = Criteria.where("userId").is(userId).and("testType").is(testType);
 
         // start date filtering
-        String dateFormat = "yyyy-MM-dd'T'HH:mm:ssX"; // adjust to your format
+        String dateFormat = "yyyy-MM-dd'T'HH:mm:ssX";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
 
         // convert string dates to Date objects if provided
