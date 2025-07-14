@@ -7,3 +7,7 @@ spring.data.mongodb.uri=
 spring.data.mongodb.database=
 
 cors.origin=
+
+security.enabled=false
+
+server.address=
