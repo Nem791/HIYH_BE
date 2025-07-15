@@ -2,6 +2,7 @@ package com.example.demo.exceptions;
 
 import com.example.demo.dto.response.ApiErrorResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -83,6 +84,15 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining("; "));
 
         ApiErrorResponse error = new ApiErrorResponse("Invalid form data", combinedErrors);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(JsonMappingException.class)
+    public ResponseEntity<ApiErrorResponse> handleJsonMappingException(JsonMappingException ex) {
+        ApiErrorResponse error = new ApiErrorResponse(
+                "Invalid user input",
+                ex.getOriginalMessage()
+        );
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 

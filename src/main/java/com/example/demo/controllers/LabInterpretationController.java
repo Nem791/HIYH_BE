@@ -4,6 +4,7 @@ import com.example.demo.dto.request.BiomarkerFormDto;
 import com.example.demo.dto.response.ApiErrorResponse;
 import com.example.demo.dto.response.LabInterpretationResponseDto;
 import com.example.demo.dto.response.LabInterpretationRecentListDto;
+import com.example.demo.filter.CustomUserDetails;
 import com.example.demo.models.LabInterpretation;
 import com.example.demo.services.LabInterpretationService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,8 +42,7 @@ public class LabInterpretationController {
             description = "Fetches a paginated list of lab interpretations (full lab report analysis) for a specific user, sorted from most recent to oldest."
     )
     public Page<LabInterpretationRecentListDto> getLabInterpretations(
-            @Parameter(description = "User ID to filter lab interpretations", example = "abc123", required = true)
-            @RequestParam String userId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @Parameter(description = "Page number (0-based)", example = "0")
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Page size (number of records per page)", example = "10")
@@ -57,7 +60,7 @@ public class LabInterpretationController {
             @Parameter(description = "Filter by test type. Options (based on Figma): 'BLOOD_TEST', 'LIPID_PANEL', 'URINE_TEST', 'OTHERS'", example = "BLOOD_TEST")
             @RequestParam(defaultValue = "BLOOD_TEST") TestType testType
     ) {
-        return labInterpretationService.getLabInterpretations(userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testType);
+        return labInterpretationService.getLabInterpretations(userDetails.getId(), page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testType);
     }
 
 
@@ -80,17 +83,16 @@ public class LabInterpretationController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<LabInterpretationResponseDto> createLabInterpretation(
             @RequestPart(value = "file") MultipartFile file,
-            @RequestPart(value = "userId") String userId
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        BiomarkerFormDto dto = new BiomarkerFormDto();
-        dto.setUserId(userId);
 
         LabInterpretationResponseDto response =
-                labInterpretationService.createLabInterpretation(file, dto);
+                labInterpretationService.createLabInterpretation(file, userDetails.getId());
 
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("@ownershipSecurity.isLabOwner(#id, principal.id)")
     @GetMapping("/{id}")
     @Operation(
             summary = "Get a lab interpretation by ID",
@@ -112,10 +114,9 @@ public class LabInterpretationController {
             @Parameter(description = "Lab interpretation ID", required = true)
             @PathVariable String id,
 
-            @Parameter(description = "User ID to verify ownership", required = true, example = "61")
-            @RequestParam String userId
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        LabInterpretationResponseDto dto = labInterpretationService.getByIdAndUser(id, userId);
+        LabInterpretationResponseDto dto = labInterpretationService.getByIdAndUser(id, userDetails.getId());
         return ResponseEntity.ok(dto);
     }
 
