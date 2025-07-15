@@ -1,5 +1,7 @@
 package com.example.demo.repository;
 
+import com.example.demo.constants.SortBy;
+import com.example.demo.constants.TestType;
 import com.example.demo.dto.response.LabInterpretationRecentListDto;
 import com.example.demo.models.LabInterpretation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +18,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
-
-import com.example.demo.models.SortBy;
-import com.example.demo.models.TestType;
 
 
 public class LabInterpretationRepositoryImpl implements LabInterpretationRepositoryCustom {

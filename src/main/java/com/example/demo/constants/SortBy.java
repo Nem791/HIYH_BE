@@ -1,4 +1,4 @@
-package com.example.demo.models;
+package com.example.demo.constants;
 
 public enum SortBy {
     REPORTED_ON("reportedOn"),

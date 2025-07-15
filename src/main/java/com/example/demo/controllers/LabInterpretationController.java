@@ -1,5 +1,7 @@
 package com.example.demo.controllers;
 
+import com.example.demo.constants.SortBy;
+import com.example.demo.constants.TestType;
 import com.example.demo.dto.request.BiomarkerFormDto;
 import com.example.demo.dto.response.ApiErrorResponse;
 import com.example.demo.dto.response.LabInterpretationResponseDto;
@@ -23,8 +25,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import com.example.demo.models.SortBy;
-import com.example.demo.models.TestType;
 
 @RestController
 @RequestMapping("/api/lab-interpretations")
