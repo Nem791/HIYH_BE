@@ -18,8 +18,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.example.demo.models.SortBy;
+import com.example.demo.models.TestType;
 
 import java.time.Instant;
 import java.util.List;
@@ -33,6 +36,8 @@ public class LabInterpretationService {
     private final ObjectMapper objectMapper;
     private final ModelMapper modelMapper;
     private final LabInterpretationRepository labInterpretationRepository;
+    private static final String DEFAULT_TEST_TYPE = "bloodTest";
+    private static final String DEFAULT_TEST_NAME = "Blood Test";
 
     public LabInterpretationService(AzureOpenAiService azureOpenAiService, BiomarkerService biomarkerService,
             GptRequestBuilderService gptRequestBuilderService, ObjectMapper objectMapper, ModelMapper modelMapper,
@@ -55,7 +60,7 @@ public class LabInterpretationService {
 
     public Page<LabInterpretationRecentListDto> getLabInterpretations(
             String userId, int page, int size,
-            String sortBy, String sortOrder, String startDate, String endDate, boolean onlyAbnormal, String testType
+            SortBy sortBy, Sort.Direction sortOrder, String startDate, String endDate, boolean onlyAbnormal, TestType testType
     ) {
         return labInterpretationRepository.findRecentByUserId(
                 userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testType
@@ -87,8 +92,8 @@ public class LabInterpretationService {
             labInterpretation.setUserId(biomarkerData.getUserId());
             labInterpretation.setBiomarkerRecordId(record.getId());
             // set testType and testName to these defaults for now
-            labInterpretation.setTestType("bloodTest");
-            labInterpretation.setTestName("Blood Test");
+            labInterpretation.setTestType(DEFAULT_TEST_TYPE);
+            labInterpretation.setTestName(DEFAULT_TEST_NAME);
 
             // Step 3 - Enrich from merged biomarker values
             Map<String, BiomarkerValue> merged = BiomarkerUtils.mergeBiomarkersWithPriority(recentBiomarkerRecords);

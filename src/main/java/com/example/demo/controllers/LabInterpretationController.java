@@ -9,6 +9,7 @@ import com.example.demo.services.LabInterpretationService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import com.example.demo.models.SortBy;
+import com.example.demo.models.TestType;
 
 @RestController
 @RequestMapping("/api/lab-interpretations")
@@ -41,18 +44,18 @@ public class LabInterpretationController {
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Page size (number of records per page)", example = "10")
             @RequestParam(defaultValue = "10") int size,
-            @Parameter(description = "Sort by: 'reportedOn' or 'abnormalBiomarkers' or 'testName'", example = "reportedOn")
-            @RequestParam(defaultValue = "reportedOn") String sortBy,
-            @Parameter(description = "Sort order: 'asc' or 'desc'", example = "desc")
-            @RequestParam(defaultValue = "desc") String sortOrder,
+            @Parameter(description = "Sort by: 'REPORTED_ON' or 'ABNORMAL_BIOMARKERS' or 'TEST_NAME'", example = "REPORTED_ON")
+            @RequestParam(defaultValue = "REPORTED_ON") SortBy sortBy,
+            @Parameter(description = "Sort order: 'ASC' or 'DESC'", example = "DESC")
+            @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder,
             @Parameter(description = "Start date for filtering (ISO 8601)", example = "2025-05-20T00:00:00Z")
             @RequestParam(required = false) String startDate,
             @Parameter(description = "End date for filtering (ISO 8601)", example = "2025-05-22T23:59:59Z")
             @RequestParam(required = false) String endDate,
             @Parameter(description = "Only show results with abnormal biomarkers (true/false)", example = "false")
             @RequestParam(defaultValue = "false") boolean onlyAbnormal,
-            @Parameter(description = "Filter by test type. Options (based on Figma): 'bloodTest', lipidPanel, 'urineTest', 'others'", example = "bloodTest")
-            @RequestParam(defaultValue = "bloodTest") String testType
+            @Parameter(description = "Filter by test type. Options (based on Figma): 'BLOOD_TEST', 'LIPID_PANEL', 'URINE_TEST', 'OTHERS'", example = "BLOOD_TEST")
+            @RequestParam(defaultValue = "BLOOD_TEST") TestType testType
     ) {
         return labInterpretationService.getLabInterpretations(userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testType);
     }

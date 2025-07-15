@@ -17,6 +17,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
+import com.example.demo.models.SortBy;
+import com.example.demo.models.TestType;
+
+
 public class LabInterpretationRepositoryImpl implements LabInterpretationRepositoryCustom {
 
     @Autowired
@@ -25,10 +29,10 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
     @Override
     public Page<LabInterpretationRecentListDto> findRecentByUserId(
             String userId, int page, int size,
-            String sortBy, String sortOrder, String startDate, String endDate, boolean onlyAbnormal, String testType
+            SortBy sortBy, Sort.Direction sortOrder, String startDate, String endDate, boolean onlyAbnormal, TestType testType
     ) {
         // filter by userId and testType
-        Criteria matchCriteria = Criteria.where("userId").is(userId).and("testType").is(testType);
+        Criteria matchCriteria = Criteria.where("userId").is(userId).and("testType").is(testType.getValue());
 
         // start date filtering
         String dateFormat = "yyyy-MM-dd'T'HH:mm:ssX";
@@ -53,17 +57,8 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
 
         MatchOperation match = Aggregation.match(matchCriteria);
         
-        // sort based on field and direction
-        Sort.Direction direction = "asc".equalsIgnoreCase(sortOrder) ? Sort.Direction.ASC : Sort.Direction.DESC;
-        String sortByValue;
-        if("abnormalBiomarkers".equalsIgnoreCase(sortBy)) {
-            sortByValue = "abnormalBiomarkers";
-        } else if ("testName".equalsIgnoreCase(sortBy)) {
-            sortByValue = "testName";
-        } else {
-            sortByValue = "reportedOn";
-        }
-        SortOperation sort = Aggregation.sort(Sort.by(direction, sortByValue));
+        String sortByValue = sortBy.getValue();
+        SortOperation sort = Aggregation.sort(Sort.by(sortOrder, sortByValue));
 
         ProjectionOperation project = Aggregation.project("id", "userId", "createdAt", "reportedOn", "testType", "testName").and(
                 ArrayOperators.Size.lengthOfArray(
