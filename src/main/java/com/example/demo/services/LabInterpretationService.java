@@ -1,6 +1,9 @@
 package com.example.demo.services;
 
 import com.example.demo.dto.request.BiomarkerFormDto;
+import com.example.demo.constants.SortBy;
+import com.example.demo.constants.TestType;
+import com.example.demo.constants.AppConstants;
 import com.example.demo.dto.GptRequest;
 import com.example.demo.dto.request.PatientInfoDto;
 import com.example.demo.dto.response.LabInterpretationResponseDto;
@@ -18,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +37,7 @@ public class LabInterpretationService {
     private final ObjectMapper objectMapper;
     private final ModelMapper modelMapper;
     private final LabInterpretationRepository labInterpretationRepository;
+
 
     public LabInterpretationService(AzureOpenAiService azureOpenAiService, BiomarkerService biomarkerService,
             GptRequestBuilderService gptRequestBuilderService, ObjectMapper objectMapper, ModelMapper modelMapper,
@@ -53,9 +58,14 @@ public class LabInterpretationService {
         return modelMapper.map(labInterpretation, LabInterpretationResponseDto.class);
     }
 
-    public Page<LabInterpretationRecentListDto> getLabInterpretations(String userId, int page, int size) {
+    public Page<LabInterpretationRecentListDto> getLabInterpretations(
+            String userId, int page, int size,
+            SortBy sortBy, Sort.Direction sortOrder, String startDate, String endDate, boolean onlyAbnormal, List<TestType> testTypes
+    ) {
         System.out.println(userId);
-        return labInterpretationRepository.findRecentByUserId(userId, page, size);
+        return labInterpretationRepository.findRecentByUserId(
+                userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testTypes
+        );
     }
 
     public LabInterpretationResponseDto createLabInterpretation(MultipartFile file, String userId) {
@@ -85,6 +95,9 @@ public class LabInterpretationService {
             labInterpretation.setReportedOn(record.getReportedOn());
             labInterpretation.setUserId(userId);
             labInterpretation.setBiomarkerRecordId(record.getId());
+            // set testType and testName to these defaults for now
+            labInterpretation.setTestType(AppConstants.DEFAULT_TEST_TYPE);
+            labInterpretation.setTestName(AppConstants.DEFAULT_TEST_NAME);
 
             // Step 3 - Enrich from merged biomarker values
             Map<String, BiomarkerValue> merged = BiomarkerUtils.mergeBiomarkersWithPriority(recentBiomarkerRecords);

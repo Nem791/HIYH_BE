@@ -13,5 +13,6 @@ public class LabInterpretationRecentListDto {
     private Date createdAt;
     private Date reportedOn;
     private int abnormalBiomarkers;
-
+    private String testType;
+    private String testName;
 }
