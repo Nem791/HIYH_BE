@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.RestClientException;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -94,6 +95,15 @@ public class GlobalExceptionHandler {
                 ex.getOriginalMessage()
         );
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmailSendException.class)
+    public ResponseEntity<Map<String, String>> handleEmailSendException(EmailSendException ex) {
+        Map<String, String> error = Map.of(
+                "error", "Email sending failed",
+                "message", ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     // 🔐 Authentication & Authorization Exceptions
