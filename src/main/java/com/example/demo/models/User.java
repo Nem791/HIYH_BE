@@ -1,13 +1,12 @@
 package com.example.demo.models;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,11 +24,23 @@ public class User {
     private String email;
     private String password; // hashed
 
+    private Boolean isVerified = false;
+    private String verificationCode;
+    private Date verificationCodeExpiry;
+
+
     // Optional patient info fields
+    private String fullName;
+    private String preferredName;
+    private String regionOfResidence;
+    private Date dob;
+
     private Integer age;
     private String gender;
     private String race;
     private List<String> chronicDisease;
     private Double weight;
     private Double height;
+
+    private Instant createdAt = Instant.now();
 }

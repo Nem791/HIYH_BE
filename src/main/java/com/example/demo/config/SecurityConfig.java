@@ -13,6 +13,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -21,17 +27,21 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final boolean securityEnabled;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final String corsOrigin;
 
     public SecurityConfig(JwtAuthFilter jwtAuthFilter,
-                          @Value("${security.enabled:true}") boolean securityEnabled, CustomAuthenticationEntryPoint authenticationEntryPoint) {
+                          @Value("${security.enabled:true}") boolean securityEnabled, CustomAuthenticationEntryPoint authenticationEntryPoint,
+                          @Value("${cors.origin}") String corsOrigin) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.securityEnabled = securityEnabled;
         this.authenticationEntryPoint = authenticationEntryPoint;
+        this.corsOrigin = corsOrigin;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> {}).csrf(AbstractHttpConfigurer::disable)
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint) // 👈 handle 401 with custom JSON
                 );
@@ -51,6 +61,23 @@ public class SecurityConfig {
         }
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        List<String> allowedOrigins = Arrays.stream(corsOrigin.split(","))
+                .map(String::trim)
+                .toList();
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(allowedOrigins);
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Bean

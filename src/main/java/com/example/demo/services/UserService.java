@@ -6,7 +6,6 @@ import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,10 @@ public class UserService implements UserDetailsService {
     public CustomUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+
+        if (Boolean.FALSE.equals(user.getIsVerified())) {
+            throw new UsernameNotFoundException("User has not completed verification");
+        }
         return new CustomUserDetails(user);
     }
 
@@ -35,5 +38,4 @@ public class UserService implements UserDetailsService {
         objectMapper.updateValue(user, dto); // May throw JsonMappingException
         userRepository.save(user);
     }
-
 }
