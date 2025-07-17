@@ -28,10 +28,15 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
     @Override
     public Page<LabInterpretationRecentListDto> findRecentByUserId(
             String userId, int page, int size,
-            SortBy sortBy, Sort.Direction sortOrder, String startDate, String endDate, boolean onlyAbnormal, TestType testType
+            SortBy sortBy, Sort.Direction sortOrder, String startDate, String endDate, boolean onlyAbnormal, List<TestType> testTypes
     ) {
+
+        List<String> testTypeValues = testTypes.stream()
+                .map(TestType::getValue)
+                .toList();
+
         // filter by userId and testType
-        Criteria matchCriteria = Criteria.where("userId").is(userId).and("testType").is(testType.getValue());
+        Criteria matchCriteria = Criteria.where("userId").is(userId).and("testType").in(testTypeValues);
 
         // start date filtering
         String dateFormat = "yyyy-MM-dd'T'HH:mm:ssX";

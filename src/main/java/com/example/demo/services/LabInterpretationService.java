@@ -60,11 +60,11 @@ public class LabInterpretationService {
 
     public Page<LabInterpretationRecentListDto> getLabInterpretations(
             String userId, int page, int size,
-            SortBy sortBy, Sort.Direction sortOrder, String startDate, String endDate, boolean onlyAbnormal, TestType testType
+            SortBy sortBy, Sort.Direction sortOrder, String startDate, String endDate, boolean onlyAbnormal, List<TestType> testTypes
     ) {
         System.out.println(userId);
         return labInterpretationRepository.findRecentByUserId(
-                userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testType
+                userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testTypes
         );
     }
 

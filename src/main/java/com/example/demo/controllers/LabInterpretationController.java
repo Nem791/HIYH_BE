@@ -20,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -57,10 +58,10 @@ public class LabInterpretationController {
             @RequestParam(required = false) String endDate,
             @Parameter(description = "Only show results with abnormal biomarkers (true/false)", example = "false")
             @RequestParam(defaultValue = "false") boolean onlyAbnormal,
-            @Parameter(description = "Filter by test type. Options (based on Figma): 'BLOOD_TEST', 'LIPID_PANEL', 'URINE_TEST', 'OTHERS'", example = "BLOOD_TEST")
-            @RequestParam(defaultValue = "BLOOD_TEST") TestType testType
+            @Parameter(description = "Filter by test type. Options (based on Figma): 'BLOOD_TEST', 'LIPID_PANEL', 'URINE_TEST', 'OTHERS'", example = "BLOOD_TEST, LIPID_PANEL")
+            @RequestParam(defaultValue = "BLOOD_TEST") List<TestType> testTypes
     ) {
-        return labInterpretationService.getLabInterpretations(userDetails.getId(), page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testType);
+        return labInterpretationService.getLabInterpretations(userDetails.getId(), page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testTypes);
     }
 
 
