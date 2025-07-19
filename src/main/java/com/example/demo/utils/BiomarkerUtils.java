@@ -3,7 +3,6 @@ package com.example.demo.utils;
 import com.example.demo.models.BiomarkerRecord;
 import com.example.demo.models.BiomarkerValue;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class BiomarkerUtils {
     public static void sanitizeBiomarkerKeys(Map<String, BiomarkerValue> biomarkers) {
         if (biomarkers == null || biomarkers.isEmpty()) return;
 
-        Map<String, BiomarkerValue> sanitized = new HashMap<>();
+        Map<String, BiomarkerValue> sanitized = new LinkedHashMap<>();
         for (Map.Entry<String, BiomarkerValue> entry : biomarkers.entrySet()) {
             String originalKey = entry.getKey();
             String sanitizedKey = sanitizeMongoKey(originalKey);
