@@ -1,11 +1,10 @@
 package com.example.demo.services;
 
 import com.example.demo.dto.request.BiomarkerFormDto;
-import com.example.demo.constants.SortBy;
-import com.example.demo.constants.TestType;
 import com.example.demo.constants.AppConstants;
 import com.example.demo.dto.GptRequest;
 import com.example.demo.dto.request.PatientInfoDto;
+import com.example.demo.dto.request.SortAndFilterDto;
 import com.example.demo.dto.response.LabInterpretationResponseDto;
 import com.example.demo.dto.response.LabInterpretationRecentListDto;
 import com.example.demo.exceptions.GptResponseParseException;
@@ -21,7 +20,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,11 +59,13 @@ public class LabInterpretationService {
     }
 
     public Page<LabInterpretationRecentListDto> getLabInterpretations(
-            String userId, int page, int size,
-            SortBy sortBy, Sort.Direction sortOrder, String startDate, String endDate, boolean onlyAbnormal, List<TestType> testTypes
+            String userId, int page, int size, SortAndFilterDto sortAndFilterDto
     ) {
         return labInterpretationRepository.findRecentByUserId(
-                userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testTypes
+            userId,
+            page,
+            size,
+            sortAndFilterDto
         );
     }
 
