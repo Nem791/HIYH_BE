@@ -50,7 +50,6 @@ public class JwtUtil {
         Claims claims = getAllClaimsFromToken(token);
 
         Date expiration = claims.getExpiration();
-        System.out.println(expiration);
         if (expiration != null && expiration.before(new Date())) {
             throw new ExpiredJwtException(null, claims, "Token expired");
         }

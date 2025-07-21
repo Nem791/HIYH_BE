@@ -50,8 +50,6 @@ public class VerificationEmailService {
         if (response.getStatusCode() != 202) {
             throw new RuntimeException("Failed to send verification email: " + response.getBody());
         }
-
-        System.out.println("Verification email sent to " + recipientEmail);
     }
 
     public void sendVerificationCode(String recipientEmail, String code) throws Exception {
@@ -75,8 +73,6 @@ public class VerificationEmailService {
         if (response.getStatusCode() != 202) {
             throw new RuntimeException("Failed to send verification code: " + response.getBody());
         }
-
-        System.out.println("Verification code sent to " + recipientEmail);
     }
 
 }
