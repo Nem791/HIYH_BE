@@ -1,9 +1,11 @@
 package com.example.demo.services;
 
+import com.example.demo.constants.AppConstants;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.request.UserRegistrationDto;
 import com.example.demo.exceptions.EmailSendException;
 import com.example.demo.exceptions.InvalidCredentialsException;
+import com.example.demo.exceptions.MissingCookieException;
 import com.example.demo.models.PendingUser;
 import com.example.demo.models.User;
 import com.example.demo.repository.PendingUserRepository;
@@ -29,8 +31,6 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
     private final VerificationEmailService verificationEmailService;
-
-    private final long SIGN_UP_TOKEN_EXPIRY_MS = 15 * 60 * 1000; // 15 minutes
 
     public AuthService(UserRepository userRepository, PendingUserRepository pendingUserRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, ObjectMapper objectMapper, VerificationEmailService verificationEmailService) {
         this.userRepository = userRepository;
@@ -71,25 +71,29 @@ public class AuthService {
         PendingUser pendingUser = pendingUserRepository.findByEmail(email.trim().toLowerCase())
                 .orElseThrow(() -> new UsernameNotFoundException("Pending user not found"));
 
+        if (pendingUser.getVerificationCode() == null || !pendingUser.getVerificationCode().equals(code)) {
+            throw new IllegalArgumentException("Invalid verification code");
+        }
+
         if (pendingUser.getVerificationCodeExpiry().isBefore(Instant.now())) {
             throw new IllegalArgumentException("Verification code expired");
         }
 
-        if (!pendingUser.getVerificationCode().equals(code)) {
-            throw new IllegalArgumentException("Invalid verification code");
-        }
-
         pendingUser.setVerificationCode(null);
-        pendingUser.setVerificationCodeExpiry(Instant.now()); // Optional: mark as expired immediately
+        pendingUser.setVerificationCodeExpiry(Instant.now());
         pendingUserRepository.save(pendingUser);
 
-        return jwtUtil.generateSignupToken(email, SIGN_UP_TOKEN_EXPIRY_MS);
+        return jwtUtil.generateSignupToken(email, AppConstants.SIGNUP_TOKEN_EXPIRY_15_MINUTES_MS);
     }
 
 
 
     public void signup(UserRegistrationDto dto, String signupTokenFromCookie) {
+        if (signupTokenFromCookie == null || signupTokenFromCookie.isBlank()) {
+            throw new MissingCookieException(AppConstants.SIGNUP_TOKEN);
+        }
         // Validate token
+        jwtUtil.validateToken(signupTokenFromCookie);
         Claims claims = jwtUtil.getAllClaimsFromToken(signupTokenFromCookie);
 
         String emailFromToken = claims.getSubject();

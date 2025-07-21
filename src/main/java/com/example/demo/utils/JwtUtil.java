@@ -1,23 +1,29 @@
 package com.example.demo.utils;
 
+import com.example.demo.constants.AppConstants;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private static final String SECRET_KEY = "your-256-bit-secret-key-should-be-long-enough";
-    private static final SecretKey SIGNING_KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
-    private final long EXPIRATION_MS = 86400000; // 24 hours
+    private final SecretKey SIGNING_KEY;
+    private final long defaultExpiryMs = AppConstants.JWT_EXPIRY_24_HOURS_MS;
+
+    public JwtUtil(@Value("${JWT_SECRET}") String secretKey) {
+        this.SIGNING_KEY = Keys.hmacShaKeyFor(secretKey.getBytes());
+    }
 
     public String generateToken(String username) {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .expiration(new Date(System.currentTimeMillis() + defaultExpiryMs))
                 .signWith(SIGNING_KEY)
                 .compact();
     }
@@ -44,6 +50,7 @@ public class JwtUtil {
         Claims claims = getAllClaimsFromToken(token);
 
         Date expiration = claims.getExpiration();
+        System.out.println(expiration);
         if (expiration != null && expiration.before(new Date())) {
             throw new ExpiredJwtException(null, claims, "Token expired");
         }

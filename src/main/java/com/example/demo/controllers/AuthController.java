@@ -1,18 +1,17 @@
 package com.example.demo.controllers;
 
+import com.example.demo.constants.AppConstants;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.request.ResendRequest;
-import com.example.demo.dto.request.SendVerificationCodeRequest;
 import com.example.demo.dto.request.UserRegistrationDto;
 import com.example.demo.dto.request.VerifyEmailCodeRequest;
 import com.example.demo.services.AuthService;
+import com.example.demo.utils.CookieUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -39,9 +38,19 @@ public class AuthController {
             description = "Start sign-up process by requesting a verification code to email."
     )
     @PostMapping("/pre-signup")
-    public ResponseEntity<?> preSignup(@RequestBody SendVerificationCodeRequest request) {
+    public ResponseEntity<?> preSignup(@Valid @RequestBody ResendRequest request) {
         authService.preSignup(request.getEmail());
         return ResponseEntity.ok(Map.of("message", "Verification code sent to email"));
+    }
+
+    @Operation(
+            summary = "Resend verification code",
+            description = "Resend the verification code for pending sign-up. Can be rate-limited client-side."
+    )
+    @PostMapping("/resend-verification")
+    public ResponseEntity<?> resendVerification(@Valid @RequestBody ResendRequest request) {
+        authService.preSignup(request.getEmail());
+        return ResponseEntity.ok(Map.of("message", "Verification code resent successfully!"));
     }
 
     @Operation(
@@ -54,22 +63,15 @@ public class AuthController {
             }
     )
     @PostMapping("/verify-email")
-    public ResponseEntity<?> verifyEmail(
-            @RequestParam String email,
-            @RequestParam String code,
-            HttpServletResponse response) {
+    public ResponseEntity<?> verifyEmail(@Valid @RequestBody VerifyEmailCodeRequest request,
+                                         HttpServletResponse response) {
 
-        String token = authService.verifyEmail(email, code);
-        System.out.println(token);
-        long SIGN_UP_TOKEN_EXPIRY_MS = 15 * 60 * 1000;
+        String token = authService.verifyEmail(request.getEmail(), request.getCode());
+        response.addCookie(
+                CookieUtil.createHttpOnlyCookie(AppConstants.SIGNUP_TOKEN, token, AppConstants.SIGNUP_TOKEN_EXPIRY_1_MIN_MS)
+        );
 
-        Cookie cookie = new Cookie("signup_token", token);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge((int) (SIGN_UP_TOKEN_EXPIRY_MS / 1000));
-        response.addCookie(cookie);
-
-        return ResponseEntity.ok("Verification successful");
+        return ResponseEntity.ok(Map.of("message", "Verification successful"));
     }
 
     @Operation(
@@ -82,19 +84,12 @@ public class AuthController {
     )
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserRegistrationDto dto,
-                                    @CookieValue("signup_token") String signupToken) {
+                                    @CookieValue(value = AppConstants.SIGNUP_TOKEN, required = false) String signupToken,
+                                    HttpServletResponse response) {
         authService.signup(dto, signupToken);
-        return ResponseEntity.ok(Map.of("message", "Signup successful"));
-    }
+        response.addCookie(CookieUtil.clearCookie(AppConstants.SIGNUP_TOKEN));
 
-    @Operation(
-            summary = "Resend verification code",
-            description = "Resend the verification code for pending sign-up. Can be rate-limited client-side."
-    )
-    @PostMapping("/resend-verification")
-    public ResponseEntity<?> resendVerification(@RequestBody ResendRequest request) {
-        authService.preSignup(request.getEmail()); // Use same logic as pre-signup for resends
-        return ResponseEntity.ok(Map.of("message", "Verification code resent successfully!"));
+        return ResponseEntity.ok(Map.of("message", "Signup successful"));
     }
 
     @Operation(
@@ -104,12 +99,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request, HttpServletResponse response) {
         String jwt = authService.login(request);
-        Cookie cookie = new Cookie("jwt", jwt);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false); // Set true in production for HTTPS
-        cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60);
-        response.addCookie(cookie);
+        response.addCookie(CookieUtil.createHttpOnlyCookie(AppConstants.LOGIN_TOKEN, jwt, AppConstants.JWT_EXPIRY_24_HOURS_MS));
 
         return ResponseEntity.ok(Map.of("message", "Login successful"));
     }
@@ -120,12 +110,7 @@ public class AuthController {
     )
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("jwt", null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        response.addCookie(CookieUtil.clearCookie(AppConstants.LOGIN_TOKEN));
 
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
