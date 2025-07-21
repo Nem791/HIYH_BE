@@ -1,5 +1,6 @@
 package com.example.demo.exceptions;
 
+import com.example.demo.constants.AppConstants;
 import com.example.demo.dto.response.ApiErrorResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -9,10 +10,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.RestClientException;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -96,6 +99,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(EmailSendException.class)
+    public ResponseEntity<Map<String, String>> handleEmailSendException(EmailSendException ex) {
+        Map<String, String> error = Map.of(
+                "error", "Email sending failed",
+                "message", ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
     // 🔐 Authentication & Authorization Exceptions
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ApiErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
@@ -137,4 +149,22 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    // Handle missing cookies globally
+    @ExceptionHandler(MissingCookieException.class)
+    public ResponseEntity<ApiErrorResponse> handleMissingCookie(MissingCookieException ex) {
+        String cookieName = ex.getCookieName();
+
+        String message = switch (cookieName) {
+            case AppConstants.SIGNUP_TOKEN -> "Signup token is missing. Please verify your email before signing up.";
+            case AppConstants.LOGIN_TOKEN -> "Session token is missing. Please log in again.";
+            default -> "Required cookie '" + cookieName + "' is missing.";
+        };
+
+        ApiErrorResponse errorResponse = new ApiErrorResponse(
+                "Missing cookie",
+                message
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }

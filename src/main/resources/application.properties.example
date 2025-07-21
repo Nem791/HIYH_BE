@@ -1,13 +1,28 @@
-spring.application.name=
-openai.api.url=
-openai.api.key=
-azure.openai.deployment-name=
+# Application  
+spring.application.name=demo
 
-spring.data.mongodb.uri=
-spring.data.mongodb.database=
+# MongoDB  
+spring.data.mongodb.uri=mongodb+srv://<username>:<password>@cluster0.example.mongodb.net/
+spring.data.mongodb.database=your_database_name
 
-cors.origin=
+# OpenAI (Azure)  
+openai.api.url=https://<your-azure-endpoint>/openai/deployments/<deployment-name>/chat/completions?api-version=<version>
+openai.api.key=YOUR_OPENAI_KEY
+azure.openai.deployment-name=your_deployment_name
 
-security.enabled=false
+# JWT  
+JWT_SECRET=your-256-bit-secret-key-should-be-long-enough
 
-server.address=
+# Security  
+security.enabled=true
+
+# Server  
+server.address=0.0.0.0
+
+# CORS  
+cors.origin=http://localhost:3000,http://localhost:3001,http://example.com
+
+# SendGrid  
+sendgrid.api.key=YOUR_SENDGRID_API_KEY
+sendgrid.sender.email=your@email.com
+sendgrid.frontend.url=http://localhost:3000/verify
