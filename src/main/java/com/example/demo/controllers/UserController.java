@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.dto.request.UserProfileUpdateDto;
 import com.example.demo.dto.response.ApiErrorResponse;
+import com.example.demo.dto.response.UserResponseDto;
 import com.example.demo.filter.CustomUserDetails;
 import com.example.demo.services.UserService;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -13,10 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -59,4 +57,29 @@ public class UserController {
                 java.util.Map.of("message", "Profile updated successfully")
         );
     }
+
+    @GetMapping("/profile-info")
+    @Operation(
+            summary = "Get current user's profile",
+            description = "Fetches the profile information of the authenticated user (non-sensitive data)."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully fetched user profile",
+                    content = @Content(schema = @Schema(implementation = UserResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized (missing or invalid JWT)",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))
+            )
+    })
+    public ResponseEntity<UserResponseDto> getProfile(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        UserResponseDto userDto = userService.getUserProfile(userDetails.getId());
+        return ResponseEntity.ok(userDto);
+    }
+
 }
