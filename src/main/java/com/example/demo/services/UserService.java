@@ -1,6 +1,8 @@
 package com.example.demo.services;
 
 import com.example.demo.dto.request.UserProfileUpdateDto;
+import com.example.demo.dto.response.UserResponseDto;
+import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.filter.CustomUserDetails;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
@@ -25,8 +27,8 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-        if (Boolean.FALSE.equals(user.getIsVerified())) {
-            throw new UsernameNotFoundException("User has not completed verification");
+        if (Boolean.FALSE.equals(user.getConsented())) {
+            throw new UsernameNotFoundException("User has not consent");
         }
         return new CustomUserDetails(user);
     }
@@ -38,4 +40,12 @@ public class UserService implements UserDetailsService {
         objectMapper.updateValue(user, dto); // May throw JsonMappingException
         userRepository.save(user);
     }
+
+    public UserResponseDto getUserProfile(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+
+        return objectMapper.convertValue(user, UserResponseDto.class);
+    }
+
 }

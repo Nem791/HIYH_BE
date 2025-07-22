@@ -24,7 +24,7 @@ public class User {
     private String email;
     private String password; // hashed
 
-    private Boolean isVerified = false;
+    private Boolean consented = false;
     private String verificationCode;
     private Date verificationCodeExpiry;
 
