@@ -38,16 +38,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateSignupToken(String email, long customExpiryMs) {
-        return Jwts.builder()
-                .subject(email)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + customExpiryMs))
-                .claim("purpose", "signup")
-                .signWith(SIGNING_KEY)
-                .compact();
-    }
-
     public Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(SIGNING_KEY)
