@@ -28,8 +28,10 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
 
     @Override
     public Page<LabInterpretationRecentListDto> findRecentByUserId(
-            String userId, int page, int size, SortAndFilterDto sortAndFilterDto
+            String userId, SortAndFilterDto sortAndFilterDto
     ) {
+        int page = sortAndFilterDto.getPage();
+        int size = sortAndFilterDto.getSize();
         SortBy sortBy = sortAndFilterDto.getSortBy();
         Sort.Direction sortOrder = sortAndFilterDto.getSortOrder();
         String startDate = sortAndFilterDto.getStartDate();

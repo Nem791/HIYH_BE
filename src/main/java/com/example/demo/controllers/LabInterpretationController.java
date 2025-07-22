@@ -49,7 +49,7 @@ public class LabInterpretationController {
             )
             @Nullable @ModelAttribute SortAndFilterDto sortAndFilterDto
     ) {
-        return labInterpretationService.getLabInterpretations(userDetails.getId(), page, size, sortAndFilterDto);
+        return labInterpretationService.getLabInterpretations(userDetails.getId(), sortAndFilterDto);
     }
 
 

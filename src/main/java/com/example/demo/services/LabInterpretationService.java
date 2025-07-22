@@ -59,13 +59,13 @@ public class LabInterpretationService {
     }
 
     public Page<LabInterpretationRecentListDto> getLabInterpretations(
-            String userId, int page, int size, SortAndFilterDto sortAndFilterDto
+            String userId, SortAndFilterDto sortAndFilterDto
     ) {
+        if (sortAndFilterDto == null)
+            sortAndFilterDto = new SortAndFilterDto();
         return labInterpretationRepository.findRecentByUserId(
-            userId,
-            page,
-            size,
-            sortAndFilterDto
+                userId,
+                sortAndFilterDto
         );
     }
 

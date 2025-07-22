@@ -6,6 +6,6 @@ import com.example.demo.dto.request.SortAndFilterDto;
 
 public interface LabInterpretationRepositoryCustom {
     Page<LabInterpretationRecentListDto> findRecentByUserId(
-        String userId, int page, int size, SortAndFilterDto sortAndFilterDto
+        String userId, SortAndFilterDto sortAndFilterDto
     );
 }
