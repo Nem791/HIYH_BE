@@ -43,7 +43,7 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(authenticationEntryPoint) // 👈 handle 401 with custom JSON
+                        .authenticationEntryPoint(authenticationEntryPoint) // handle 401 with custom JSON
                 );
 
         if (!securityEnabled) {

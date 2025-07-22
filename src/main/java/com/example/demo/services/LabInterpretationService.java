@@ -62,7 +62,6 @@ public class LabInterpretationService {
             String userId, int page, int size,
             SortBy sortBy, Sort.Direction sortOrder, String startDate, String endDate, boolean onlyAbnormal, List<TestType> testTypes
     ) {
-        System.out.println(userId);
         return labInterpretationRepository.findRecentByUserId(
                 userId, page, size, sortBy, sortOrder, startDate, endDate, onlyAbnormal, testTypes
         );
