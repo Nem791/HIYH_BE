@@ -10,6 +10,7 @@ import com.example.demo.models.LabInterpretation;
 import com.example.demo.services.LabInterpretationService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +43,10 @@ public class LabInterpretationController {
     )
     public Page<LabInterpretationRecentListDto> getLabInterpretations(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
             @Parameter(
                 description = "Filtering and sorting options. For startDate and endDate, string must be in ISO 8601 format, e.g. 2025-05-20T00:00:00Z. For testTypes, use a comma-separated string and not an array or with brackets, e.g. BLOOD_TEST, URINE_TEST"
             )
-            @Nullable @ModelAttribute SortAndFilterDto sortAndFilterDto
+            @Nullable @ParameterObject @ModelAttribute SortAndFilterDto sortAndFilterDto
     ) {
         return labInterpretationService.getLabInterpretations(userDetails.getId(), sortAndFilterDto);
     }
