@@ -69,8 +69,7 @@ public class GptRequestBuilderService {
     }
 
     private void generateMockPatientData(PatientInfoDto patientInfo) {
-        patientInfo.setAge(28);
-        patientInfo.setGender("Male");
+        patientInfo.setSexAtBirth("Male");
         patientInfo.setRace("Chinese");
         patientInfo.setChronicDisease(List.of("Heart disease"));
         patientInfo.setWeight(170.0);

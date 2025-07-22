@@ -35,8 +35,7 @@ public class User {
     private String regionOfResidence;
     private Date dob;
 
-    private Integer age;
-    private String gender;
+    private String sexAtBirth;
     private String race;
     private List<String> chronicDisease;
     private Double weight;
