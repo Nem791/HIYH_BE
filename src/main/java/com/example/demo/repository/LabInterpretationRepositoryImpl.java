@@ -4,7 +4,6 @@ import com.example.demo.constants.SortBy;
 import com.example.demo.constants.TestType;
 import com.example.demo.dto.response.LabInterpretationRecentListDto;
 import com.example.demo.models.LabInterpretation;
-import com.example.demo.dto.request.SortAndFilterDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,17 +27,9 @@ public class LabInterpretationRepositoryImpl implements LabInterpretationReposit
 
     @Override
     public Page<LabInterpretationRecentListDto> findRecentByUserId(
-            String userId, SortAndFilterDto sortAndFilterDto
+            String userId, int page, int size,
+            SortBy sortBy, Sort.Direction sortOrder, String startDate, String endDate, boolean onlyAbnormal, List<TestType> testTypes
     ) {
-        int page = sortAndFilterDto.getPage();
-        int size = sortAndFilterDto.getSize();
-        SortBy sortBy = sortAndFilterDto.getSortBy();
-        Sort.Direction sortOrder = sortAndFilterDto.getSortOrder();
-        String startDate = sortAndFilterDto.getStartDate();
-        String endDate = sortAndFilterDto.getEndDate();
-        boolean onlyAbnormal = sortAndFilterDto.isOnlyAbnormal();
-        List<TestType> testTypes = sortAndFilterDto.getTestTypes();
-
 
         List<String> testTypeValues = testTypes.stream()
                 .map(TestType::getValue)
