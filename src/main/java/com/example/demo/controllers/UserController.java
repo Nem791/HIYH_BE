@@ -48,14 +48,12 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))
             )
     })
-    public ResponseEntity<?> updateProfile(
+    public ResponseEntity<UserResponseDto> updateProfile(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody UserProfileUpdateDto updateDto
     ) throws JsonMappingException {
-        userService.updateUserProfile(userDetails.getId(), updateDto);
-        return ResponseEntity.ok().body(
-                java.util.Map.of("message", "Profile updated successfully")
-        );
+        UserResponseDto updatedProfile = userService.updateUserProfile(userDetails.getId(), updateDto);
+        return ResponseEntity.ok(updatedProfile);
     }
 
     @GetMapping("/profile-info")

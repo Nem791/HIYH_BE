@@ -32,6 +32,7 @@ public class AzureOpenAiService {
 
         HttpEntity<GptRequest> entity = new HttpEntity<>(request, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(openAiApiUrl, entity, String.class);
+        System.out.println(response);
         String responseBody = response.getBody();
         return OpenAiResponseUtils.extractMessageContentOrEmpty(responseBody);
     }

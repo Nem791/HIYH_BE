@@ -17,6 +17,9 @@ public class CustomUserDetails implements UserDetails {
     public String getId() {
         return user.getId();
     }
+    public Boolean getConsented() {
+        return user.getConsented();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -32,4 +35,5 @@ public class CustomUserDetails implements UserDetails {
     public String getUsername() {
         return user.getEmail();
     }
+
 }
