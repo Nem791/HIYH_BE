@@ -1,5 +1,8 @@
 package com.example.demo.constants;
 
+import lombok.Getter;
+
+@Getter
 public enum TestType {
     BLOOD_TEST("bloodTest"),
     LIPID_PANEL("lipidPanel"),
@@ -12,7 +15,4 @@ public enum TestType {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

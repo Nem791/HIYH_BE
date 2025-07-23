@@ -31,7 +31,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
     // List of paths to exclude from JWT authentication
     private final List<String> excludedPaths = Arrays.asList(
-            "/api/auth/**",
+            "/api/auth/verify-email",
+            "/api/auth/signup",
+            "/api/auth/resend-verification",
+            "/api/auth/pre-signup",
+            "/api/auth/logout",
+            "/api/auth/login",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html"

@@ -125,6 +125,6 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Unauthorized", "details", "You are not logged in."));
         }
-        return ResponseEntity.ok(Map.of("user", authentication));
+        return ResponseEntity.ok(Map.of("user", authentication.getName()));
     }
 }

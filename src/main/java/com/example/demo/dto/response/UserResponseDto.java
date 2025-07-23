@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +18,9 @@ public class UserResponseDto {
     @Schema(example = "John Doe")
     private String fullName;
 
+    @Schema(example = "true")
+    private Boolean consented;
+
     @Schema(example = "John")
     private String preferredName;
 
@@ -28,11 +30,8 @@ public class UserResponseDto {
     @Schema(example = "1990-01-01")
     private Date dob;
 
-    @Schema(example = "34")
-    private Integer age;
-
     @Schema(example = "Male")
-    private String gender;
+    private String sexAtBirth;
 
     @Schema(example = "Asian")
     private String race;
@@ -43,10 +42,13 @@ public class UserResponseDto {
     @Schema(example = "70.5")
     private Double weight;
 
+    @Schema(example = "kg")
+    private String weightUnit;
+
     @Schema(example = "175.0")
     private Double height;
 
-    @Schema(example = "2025-01-01T00:00:00Z")
-    private Instant createdAt;
+    @Schema(example = "cm")
+    private String heightUnit;
 
 }
