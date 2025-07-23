@@ -42,7 +42,13 @@ public class UserResponseDto {
     @Schema(example = "70.5")
     private Double weight;
 
+    @Schema(example = "kg")
+    private String weightUnit;
+
     @Schema(example = "175.0")
     private Double height;
+
+    @Schema(example = "cm")
+    private String heightUnit;
 
 }

@@ -33,17 +33,19 @@ import java.util.Map;
 public class LabInterpretationService {
     private final AzureOpenAiService azureOpenAiService;
     private final BiomarkerService biomarkerService;
+    private final UserService userService;
     private final GptRequestBuilderService gptRequestBuilderService;
     private final ObjectMapper objectMapper;
     private final ModelMapper modelMapper;
     private final LabInterpretationRepository labInterpretationRepository;
 
 
-    public LabInterpretationService(AzureOpenAiService azureOpenAiService, BiomarkerService biomarkerService,
-            GptRequestBuilderService gptRequestBuilderService, ObjectMapper objectMapper, ModelMapper modelMapper,
-            LabInterpretationRepository labInterpretationRepository) {
+    public LabInterpretationService(AzureOpenAiService azureOpenAiService, BiomarkerService biomarkerService, UserService userService,
+                                    GptRequestBuilderService gptRequestBuilderService, ObjectMapper objectMapper, ModelMapper modelMapper,
+                                    LabInterpretationRepository labInterpretationRepository) {
         this.azureOpenAiService = azureOpenAiService;
         this.biomarkerService = biomarkerService;
+        this.userService = userService;
         this.gptRequestBuilderService = gptRequestBuilderService;
         this.objectMapper = objectMapper;
         this.modelMapper = modelMapper;
@@ -78,7 +80,7 @@ public class LabInterpretationService {
         List<BiomarkerRecord> recentBiomarkerRecords = biomarkerService
                 .getLatestBiomarkerRecords(userId, 0, 1).getContent();
         // 3. Get or mock patient info
-        PatientInfoDto patientInfo = new PatientInfoDto();
+        PatientInfoDto patientInfo = modelMapper.map(userService.getUserProfile(userId), PatientInfoDto.class);
 
         // 4. Build GPT request
         GptRequest request = gptRequestBuilderService.buildAnalyzeLabResultPrompt(recentBiomarkerRecords, patientInfo);

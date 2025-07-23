@@ -38,8 +38,11 @@ public class User {
     private String sexAtBirth;
     private String race;
     private List<String> chronicDisease;
+
     private Double weight;
+    private String weightUnit = "kg";
     private Double height;
+    private String heightUnit = "cm";
 
     private Instant createdAt = Instant.now();
 }

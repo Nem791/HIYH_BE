@@ -17,7 +17,11 @@ public class UserProfileUpdateDto {
     private String sexAtBirth;
     private String race;
     private List<String> chronicDisease;
+
     private Double weight;
+    private String weightUnit;
     private Double height;
+    private String heightUnit;
+
     private Boolean consented;
 }
