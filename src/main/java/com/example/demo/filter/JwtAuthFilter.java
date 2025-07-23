@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -83,6 +84,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if (jwtUtil.validateToken(token)) {
                     String email = jwtUtil.getAllClaimsFromToken(token).getSubject();
                     CustomUserDetails userDetails = userService.loadUserByUsername(email);
+
+                    if (Boolean.FALSE.equals(userDetails.getConsented())) {
+                        if (!(AppConstants.PATH_USERS_ME.equals(request.getServletPath())
+                                && AppConstants.HTTP_METHOD_PUT.equalsIgnoreCase(request.getMethod()))) {
+                            throw new UsernameNotFoundException("User has not consent");
+                        }
+                    }
 
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(

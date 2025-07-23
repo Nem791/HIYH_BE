@@ -25,4 +25,6 @@ public final class AppConstants {
         public static final long SIGNUP_TOKEN_EXPIRY_15_MINUTES_MS = 15 * 60 * 1000L;
         public static final long JWT_EXPIRY_24_HOURS_MS = 24 * 60 * 60 * 1000L;
 
+        public static final String HTTP_METHOD_PUT = "PUT";
+        public static final String PATH_USERS_ME = "/api/users/me";
 }

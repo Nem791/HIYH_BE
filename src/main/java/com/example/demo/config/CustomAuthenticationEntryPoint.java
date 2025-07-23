@@ -27,7 +27,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         Map<String, String> error = Map.of(
                 "error", "Unauthorized",
-                "message", authException.getMessage()
+                "message", "Consent or " + authException.getMessage()
         );
 
         objectMapper.writeValue(response.getOutputStream(), error);
