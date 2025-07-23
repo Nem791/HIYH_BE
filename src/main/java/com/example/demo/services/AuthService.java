@@ -108,7 +108,6 @@ public class AuthService {
         User user = objectMapper.convertValue(dto, User.class);
         user.setId(UUID.randomUUID().toString());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setConsented(true); // Optional since signup is verification, but safe to include
 
         userRepository.save(user);
 
