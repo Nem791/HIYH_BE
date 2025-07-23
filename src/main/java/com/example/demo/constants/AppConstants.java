@@ -26,5 +26,7 @@ public final class AppConstants {
         public static final long JWT_EXPIRY_24_HOURS_MS = 24 * 60 * 60 * 1000L;
 
         public static final String HTTP_METHOD_PUT = "PUT";
+        public static final String HTTP_METHOD_GET = "GET";
         public static final String PATH_USERS_ME = "/api/users/me";
+        public static final String PATH_AUTH_ME = "/api/auth/me";
 }
