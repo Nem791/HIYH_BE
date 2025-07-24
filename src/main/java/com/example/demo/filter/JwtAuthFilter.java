@@ -87,11 +87,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                     String path = request.getServletPath();
                     String method = request.getMethod();
-                    boolean isMePath = AppConstants.PATH_USERS_ME.equals(path) || AppConstants.PATH_AUTH_ME.equals(path);
+                    boolean noConsentPaths = pathMatcher.match("/api/users/**", path) || pathMatcher.match("/api/auth/me", path);
                     boolean isAllowedMethod = AppConstants.HTTP_METHOD_PUT.equalsIgnoreCase(method) || AppConstants.HTTP_METHOD_GET.equalsIgnoreCase(method);
 
                     if (Boolean.FALSE.equals(userDetails.getConsented())) {
-                        if (!(isMePath && isAllowedMethod)) {
+                        if (!(noConsentPaths && isAllowedMethod)) {
                             throw new UsernameNotFoundException("User has not consent");
                         }
                     }
