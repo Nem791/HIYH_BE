@@ -14,7 +14,7 @@ public final class AppConstants {
         public static final String BIOMARKER_EXTRACTION_SYSTEM_PROMPT = "You are a medical data extractor. From the raw lab report text, extract only biomarker results and return them in the same order as extracted. For each biomarker, return a key-value pair where the key is the biomarker name and the value is an object with the following fields: value, resultFlag, referenceRange, resultUnits, and timeResulted. Use null if any field is missing in the report — do not guess or infer. Return the result in strict JSON format only, with no extra explanation or commentary. The value must be a number or string. resultFlag should be one of: Normal, High, Low, Critical, Abnormal, Borderline, or Unknown. timeResulted must be in ISO 8601 format or null. Ignore unrelated text or metadata, but keep in mind if there is a standalone A, that could be the abnormal flag, not part of any biomarkers name, so determine that when you encounter any";
 
         public static final String DEFAULT_TEST_TYPE = "bloodTest";
-        public static final String DEFAULT_TEST_NAME = "Blood Test";
+        public static final String DEFAULT_TEST_NAME = "CBC Blood Test";
 
         public static final String SIGNUP_TOKEN = "signup_token";
         public static final String LOGIN_TOKEN = "jwt";
