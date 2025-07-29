@@ -22,7 +22,7 @@ public final class AppConstants {
         public static final long FIVE_SECONDS_MS = 5_000L;
         public static final long SIGNUP_TOKEN_EXPIRY_1_MIN_MS = 60 * 1000L;
         public static final long SIGNUP_TOKEN_EXPIRY_3_MIN_MS = 3 * 60 * 1000L;
-        public static final long SIGNUP_TOKEN_EXPIRY_10_MIN_MS = 5 * 60 * 1000L;
+        public static final long SIGNUP_TOKEN_EXPIRY_10_MIN_MS = 10 * 60 * 1000L;
         public static final long SIGNUP_TOKEN_EXPIRY_15_MINUTES_MS = 15 * 60 * 1000L;
         public static final long JWT_EXPIRY_24_HOURS_MS = 24 * 60 * 60 * 1000L;
 
