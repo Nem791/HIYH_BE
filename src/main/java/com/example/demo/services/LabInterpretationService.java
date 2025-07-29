@@ -88,10 +88,10 @@ public class LabInterpretationService {
         String rawGptResponse = azureOpenAiService.fetchGptEndpoint(request);
 
         try {
-            // Step 1
+            // Step 1 - Parse the raw GPT response (JSON) into a LabInterpretation object
             LabInterpretation labInterpretation = objectMapper.readValue(rawGptResponse, LabInterpretation.class);
 
-            // Step 2
+            // Step 2 - Set LabInterpretation metadata and link it to the user and biomarker record
             labInterpretation.setCreatedAt(Instant.now());
             labInterpretation.setReportedOn(record.getReportedOn());
             labInterpretation.setUserId(userId);

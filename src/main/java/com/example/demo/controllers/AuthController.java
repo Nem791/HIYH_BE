@@ -68,7 +68,7 @@ public class AuthController {
 
         String token = authService.verifyEmail(request.getEmail(), request.getCode());
         response.addCookie(
-                CookieUtil.createHttpOnlyCookie(AppConstants.SIGNUP_TOKEN, token, AppConstants.SIGNUP_TOKEN_EXPIRY_1_MIN_MS)
+                CookieUtil.createHttpOnlyCookie(AppConstants.SIGNUP_TOKEN, token, AppConstants.SIGNUP_TOKEN_EXPIRY_10_MIN_MS)
         );
 
         return ResponseEntity.ok(Map.of("message", "Verification successful"));
