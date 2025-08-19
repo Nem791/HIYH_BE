@@ -21,7 +21,7 @@ COOKIE_SECURE=false
 server.address=0.0.0.0
 
 # CORS  
-cors.origin=http://localhost:3000,http://localhost:3001,http://example.com
+cors.origin=http://localhost:3000,http://localhost:3001
 
 # SendGrid  
 sendgrid.api.key=YOUR_SENDGRID_API_KEY
